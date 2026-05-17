@@ -1347,7 +1347,11 @@ function calcManual(){
   let pv,man=false;
   const pm=parseFloat(document.getElementById('cp').value);
   if(!isNaN(pm)&&pm>0){pv=pm;man=true;}else{pv=calcIdeal(ct+cd,mg,camp);}
-  const fx=gF(pv),ex=camp?.025:0,comm=(fx.c+ex)*pv,tar=fx.f,tot=comm+tar,lucro=pv-tot-cd-ct,mg2=(lucro/pv)*100;
+  const fx=gF(pv),ex=camp?.025:0,comm=(fx.c+ex)*pv,tar=fx.f;
+  const txnEl=document.getElementById('shopee-txn');
+  const txnRate=(txnEl?parseFloat(txnEl.value)||0:5)/100;
+  const txn=txnRate*pv;
+  const tot=comm+txn+tar,lucro=pv-tot-cd-ct,mg2=(lucro/pv)*100;
   const front=pv>=fx.min&&(pv-fx.min)<5&&fx.min>0;
   document.getElementById('cph').style.display='none';
   const cc=document.getElementById('cco');cc.style.display='block';
@@ -1366,7 +1370,9 @@ function calcManual(){
   if(co>0)rows.push({l:'Op. fixo',s:null,v:'− '+R(co),c:'vr'});
   if(cx>0)rows.push({l:'Outros',s:null,v:'− '+R(cx),c:'vr'});
   if(cd>0)rows.push({l:'Desconto/cupom',s:null,v:'− '+R(cd),c:'vr'});
-  rows.push({l:'Comissão Shopee',s:(fx.c*100).toFixed(0)+'%'+(camp?' + 2,5% camp':''),v:'− '+R(comm),c:'vo'},{l:'Tarifa fixa',s:fx.lb,v:'− '+R(tar),c:'vo'},{l:'Total Shopee',s:P(tot/pv*100)+' do preço',v:'− '+R(tot),c:'vo'},{l:'Lucro líquido',s:P(mg2)+' de margem',v:(lucro>=0?'':'-')+R(Math.abs(lucro)),c:lucro>=0?'vg':'vr'});
+  rows.push({l:'Comissão Shopee',s:(fx.c*100).toFixed(0)+'%'+(camp?' + 2,5% camp':''),v:'− '+R(comm),c:'vo'});
+  if(txn>0)rows.push({l:'Taxa de transação '+(txnRate*100).toFixed(1)+'%',s:null,v:'− '+R(txn),c:'vo'});
+  rows.push({l:'Tarifa fixa',s:fx.lb,v:'− '+R(tar),c:'vo'},{l:'Total Shopee',s:P(tot/pv*100)+' do preço',v:'− '+R(tot),c:'vo'},{l:'Lucro líquido',s:P(mg2)+' de margem',v:(lucro>=0?'':'-')+R(Math.abs(lucro)),c:lucro>=0?'vg':'vr'});
   document.getElementById('cbkd').innerHTML=rows.map(r=>`<div class="brow"><div class="bl">${r.l}${r.s?`<div class="bs">${r.s}</div>`:''}</div><div class="bv ${r.c}">${r.v}</div></div>`).join('');
 }
 </script>
