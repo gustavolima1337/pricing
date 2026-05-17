@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Widicare · Precificador Shopee</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── DESIGN SYSTEM — pocketchange-inspired ─────────────────────────── */
+:root {
+  --bg:      #080808;
+  --bg2:     #111111;
+  --bg3:     #1a1a1a;
+  --bg4:     #222222;
+  --border:  rgba(255,255,255,.07);
+  --border2: rgba(255,255,255,.13);
+  --red:     #f51010;
+  --red2:    #ff3333;
+  --shopee:  #ee4d2d;
+  --shopee2: #ff6b47;
+  --accent:  #f5a623;
+  --green:   #1ed760;
+  --danger:  #ff4444;
+  --blue:    #4f9eff;
+  --text:    #ffffff;
+  --text2:   #999999;
+  --text3:   #555555;
+  --mono:    'IBM Plex Mono', monospace;
+  --disp:    'Outfit', sans-serif;
+  --body:    'Outfit', sans-serif;
+  --r:       6px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
+
+/* ─── HEADER ─── */
+header{padding:24px 0;border-bottom:1px solid var(--border);margin-bottom:36px;}
+.hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.logo{display:flex;align-items:center;gap:14px;}
+.logo-icon{width:44px;height:44px;background:var(--shopee);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-weight:900;font-size:20px;color:#fff;
+  letter-spacing:-1px;}
+.logo-text strong{font-family:var(--disp);font-size:20px;font-weight:800;letter-spacing:-.5px;display:block;color:var(--text);}
+.logo-text span{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:1.5px;text-transform:uppercase;}
+.badges{display:flex;gap:6px;flex-wrap:wrap;}
+.badge{padding:5px 12px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;font-family:var(--mono);}
+.bo{background:rgba(238,77,45,.12);border:1px solid rgba(238,77,45,.25);color:var(--shopee2);}
+.bg{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:var(--text2);}
+.bdot{width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ─── TABS ─── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:32px;}
+.tab{padding:10px 22px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text3);
+  border:none;background:none;font-family:var(--body);border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:color .15s,border-color .15s;letter-spacing:.2px;}
+.tab.active{color:var(--text);border-bottom-color:var(--shopee);}
+.tab:hover:not(.active){color:var(--text2);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+
+/* ─── CARD ─── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:24px;}
+.card-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text3);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+
+/* ─── XML ZONE ─── */
+.xml-zone{border:1px dashed var(--border2);border-radius:var(--r);padding:28px 20px;
+  text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
+  position:relative;background:var(--bg3);}
+.xml-zone:hover,.xml-zone.drag{border-color:var(--shopee);background:rgba(238,77,45,.04);}
+.xml-zone.ok{border-color:var(--green);border-style:solid;background:rgba(30,215,96,.04);}
+.xml-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2;}
+.xz-icon{font-size:28px;margin-bottom:8px;transition:transform .2s;line-height:1;}
+.xml-zone:hover .xz-icon{transform:translateY(-3px);}
+.xz-title{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:4px;letter-spacing:-.2px;}
+.xz-sub{font-size:11px;color:var(--text3);font-family:var(--mono);}
+
+/* ─── MODE TABS (file/paste) ─── */
+.mode-tabs{display:flex;gap:0;background:var(--bg3);border:1px solid var(--border);
+  border-radius:5px;padding:3px;width:fit-content;margin-bottom:14px;}
+.mtab-btn{padding:5px 18px;border-radius:3px;border:none;font-size:12px;font-weight:600;
+  cursor:pointer;font-family:var(--body);background:none;color:var(--text3);transition:all .15s;letter-spacing:.2px;}
+.mtab-btn.on{background:var(--bg4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.4);}
+.mtab-btn:hover:not(.on){color:var(--text2);}
+
+/* ─── LOADED BAR ─── */
+.xlbar{display:none;align-items:center;gap:10px;padding:10px 14px;
+  background:rgba(30,215,96,.06);border:1px solid rgba(30,215,96,.15);border-radius:var(--r);margin-top:12px;}
+.xlbar.show{display:flex;}
+.xlb-ic{width:32px;height:32px;background:rgba(30,215,96,.1);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.xlb-m{flex:1;min-width:0;}
+.xlb-n{font-size:12px;font-weight:700;color:var(--green);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.xlb-d{font-size:11px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
+.btn-clr{background:none;border:1px solid rgba(255,68,68,.25);color:var(--danger);
+  border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:var(--mono);
+  font-weight:600;transition:background .15s;flex-shrink:0;}
+.btn-clr:hover{background:rgba(255,68,68,.1);}
+
+/* ─── NF LIST ─── */
+.nf-strip{display:none;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;margin-top:12px;}
+.nf-strip.show{display:grid;}
+.nf-kv{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:8px 11px;}
+.nf-kv .k{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;font-family:var(--mono);margin-bottom:3px;}
+.nf-kv .v{font-size:12px;font-family:var(--mono);font-weight:600;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ─── GLOBAL BAR ─── */
+#gbar{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 18px;margin-bottom:20px;align-items:center;flex-wrap:wrap;gap:14px;}
+#gbar.show{display:flex;}
+.gb-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;font-family:var(--mono);font-weight:700;white-space:nowrap;}
+.gb-field{display:flex;align-items:center;gap:8px;}
+.gb-field label{font-size:12.5px;color:var(--text2);font-weight:500;}
+.gb-iw{position:relative;display:flex;align-items:center;}
+.gb-pre{position:absolute;left:8px;font-family:var(--mono);font-size:11px;color:var(--text3);pointer-events:none;}
+.gb-suf{position:absolute;right:8px;font-family:var(--mono);font-size:11px;color:var(--text3);pointer-events:none;}
+.gb-in{width:76px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;
+  padding:7px 8px 7px 22px;color:var(--text);font-family:var(--mono);font-size:12.5px;
+  outline:none;transition:border-color .15s;-moz-appearance:textfield;}
+.gb-in.np{padding-left:8px;}.gb-in.hs{padding-right:22px;}
+.gb-in:focus{border-color:var(--shopee);}
+.gb-in::-webkit-inner-spin-button,.gb-in::-webkit-outer-spin-button{-webkit-appearance:none;}
+.gb-div{width:1px;height:24px;background:var(--border2);flex-shrink:0;}
+.btn-gb{padding:7px 16px;border:1px solid;border-radius:4px;font-size:11.5px;font-weight:700;
+  cursor:pointer;font-family:var(--body);transition:background .15s;white-space:nowrap;letter-spacing:.3px;}
+.btn-gb.orange{background:rgba(238,77,45,.08);border-color:rgba(238,77,45,.22);color:var(--shopee2);}
+.btn-gb.orange:hover{background:rgba(238,77,45,.16);}
+.btn-gb.green{background:rgba(30,215,96,.08);border-color:rgba(30,215,96,.2);color:var(--green);}
+.btn-gb.green:hover{background:rgba(30,215,96,.15);}
+
+/* ─── BOARD ─── */
+#product-board{display:none;}
+#product-board.show{display:block;}
+.board-count{font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:16px;font-weight:500;}
+.board-count strong{color:var(--text2);}
+
+/* ─── PRODUCT CARD ─── */
+.prod-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:16px;overflow:hidden;transition:border-color .2s;}
+.prod-card:hover{border-color:var(--border2);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.prod-card{animation:fadeUp .25s ease both;}
+
+/* Card header */
+.pc-hdr{display:flex;align-items:flex-start;justify-content:space-between;
+  padding:16px 20px 14px;border-bottom:1px solid var(--border);gap:12px;}
+.pc-hl{flex:1;min-width:0;}
+.pc-codes{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
+.chip{font-family:var(--mono);font-size:9.5px;color:var(--text3);
+  background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:2px 7px;
+  text-transform:uppercase;letter-spacing:.5px;}
+.chip.lote{color:var(--accent);border-color:rgba(245,166,35,.2);background:rgba(245,166,35,.06);}
+.chip.val{color:var(--blue);border-color:rgba(79,158,255,.2);background:rgba(79,158,255,.06);}
+.pc-name{font-family:var(--disp);font-size:15px;font-weight:800;color:var(--text);
+  line-height:1.25;margin-bottom:7px;letter-spacing:-.3px;}
+.pc-meta{display:flex;flex-wrap:wrap;gap:5px;}
+.fbadge{padding:3px 10px;border-radius:3px;font-family:var(--mono);font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.5px;}
+
+/* Card body — 2 cols */
+.pc-body{display:grid;grid-template-columns:230px 1fr;}
+@media(max-width:640px){.pc-body{grid-template-columns:1fr;}}
+
+/* Costs col */
+.pc-costs{padding:16px 18px;border-right:1px solid var(--border);}
+.pc-ctitle{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);
+  font-family:var(--mono);font-weight:700;margin-bottom:12px;}
+.pc-crow{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:8px;font-size:12.5px;color:var(--text2);}
+.pc-crow.tot{border-top:1px solid var(--border);padding-top:8px;margin-top:4px;
+  font-weight:700;color:var(--text);margin-bottom:0;font-size:13px;}
+.pc-note{font-size:10.5px;color:var(--text3);font-family:var(--mono);margin-top:10px;
+  padding-top:8px;border-top:1px solid var(--border);line-height:1.6;}
+
+/* Mini inputs */
+.mw{position:relative;display:flex;align-items:center;}
+.mp{position:absolute;left:7px;font-family:var(--mono);font-size:10px;color:var(--text3);pointer-events:none;}
+.mi{width:82px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;
+  padding:5px 7px 5px 19px;color:var(--text);font-family:var(--mono);font-size:12px;
+  outline:none;transition:border-color .15s;-moz-appearance:textfield;}
+.mi:focus{border-color:var(--shopee);}
+.mi::-webkit-inner-spin-button,.mi::-webkit-outer-spin-button{-webkit-appearance:none;}
+
+/* Pricing col */
+.pc-pricing{padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+.pc-ptop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.mfl{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px;}
+.sg-box{text-align:right;}
+.sg-val{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--shopee2);}
+.sg-sub{font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px;}
+
+/* Big price input */
+.pc-plbl{font-size:9px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:7px;}
+.pv-row{display:flex;align-items:center;gap:8px;}
+.pv-pre{font-family:var(--mono);font-size:14px;color:var(--text3);}
+.pv-in{flex:1;min-width:0;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;
+  padding:10px 13px;color:var(--text);font-family:var(--mono);font-size:22px;font-weight:700;
+  outline:none;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield;letter-spacing:-.5px;}
+.pv-in:focus{border-color:var(--shopee);box-shadow:0 0 0 3px rgba(238,77,45,.1);}
+.pv-in::-webkit-inner-spin-button,.pv-in::-webkit-outer-spin-button{-webkit-appearance:none;}
+.pv-in.profit{border-color:rgba(30,215,96,.4);}
+.pv-in.loss{border-color:rgba(255,68,68,.4);}
+.btn-auto{padding:9px 14px;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:4px;color:var(--text2);font-size:11px;font-weight:700;
+  cursor:pointer;white-space:nowrap;font-family:var(--mono);transition:all .15s;letter-spacing:.5px;}
+.btn-auto:hover{border-color:var(--shopee);color:var(--shopee2);background:rgba(238,77,45,.06);}
+
+/* Results bar */
+.pc-res{border-top:1px solid var(--border);padding:13px 20px;background:var(--bg3);}
+.pc-res-empty{font-size:11px;color:var(--text3);font-family:var(--mono);text-align:center;padding:4px;}
+.pc-res-full{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;}
+@media(max-width:560px){.pc-res-full{grid-template-columns:1fr;}}
+.pr-fees{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.pr-chip{display:flex;flex-direction:column;border-radius:4px;padding:5px 9px;min-width:64px;}
+.pr-chip .l{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);font-family:var(--mono);font-weight:700;margin-bottom:2px;}
+.pr-chip .v{font-family:var(--mono);font-size:12.5px;font-weight:600;}
+.pr-chip.fee{background:rgba(238,77,45,.07);border:1px solid rgba(238,77,45,.14);}
+.pr-chip.fee .v{color:var(--shopee2);}
+.pr-chip.total{background:rgba(245,68,68,.1);border:1px solid rgba(245,68,68,.2);}
+.pr-chip.total .v{color:var(--danger);}
+.pr-mg{display:flex;flex-direction:column;gap:6px;}
+.pr-mr{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.pr-lucro{font-family:var(--mono);font-size:13px;font-weight:700;}
+.pr-pct{font-family:var(--mono);font-size:20px;font-weight:800;letter-spacing:-1px;}
+.mtrack{height:5px;background:var(--bg);border-radius:99px;overflow:hidden;}
+.mfill{height:100%;border-radius:99px;transition:width .35s cubic-bezier(.4,0,.2,1),background .25s;min-width:2px;}
+.pr-al{font-size:10.5px;padding:5px 10px;border-radius:4px;font-family:var(--mono);font-weight:500;}
+.pr-al.warn{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);color:var(--accent);}
+.pr-al.danger{background:rgba(255,68,68,.07);border:1px solid rgba(255,68,68,.2);color:var(--danger);}
+.pr-al.ok{background:rgba(30,215,96,.06);border:1px solid rgba(30,215,96,.18);color:var(--green);}
+
+/* ─── BOARD SUMMARY ─── */
+.board-sum{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;display:none;margin-top:4px;}
+.board-sum.show{display:block;}
+.bs-ttl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);
+  font-family:var(--mono);font-weight:700;margin-bottom:14px;}
+.bs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
+.bs-kv{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:12px 14px;}
+.bs-kv .k{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;font-family:var(--mono);font-weight:700;margin-bottom:5px;}
+.bs-kv .v{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text2);letter-spacing:-.5px;}
+.bs-kv .v.g{color:var(--green);}.bs-kv .v.o{color:var(--shopee2);}.bs-kv .v.a{color:var(--accent);}
+
+/* ─── KIT CARDS ─── */
+.kit-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px 20px;transition:border-color .2s;}
+.kit-card:hover{border-color:var(--border2);}
+.kit-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:3px;
+  font-family:var(--mono);font-size:9px;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
+.kit-name{font-family:var(--disp);font-size:14px;font-weight:800;color:var(--text);
+  margin-bottom:10px;line-height:1.3;letter-spacing:-.3px;}
+.kit-items{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
+.kit-item{font-size:11px;color:var(--text3);font-family:var(--mono);
+  display:flex;justify-content:space-between;gap:8px;padding:5px 9px;
+  background:var(--bg3);border-radius:3px;}
+.kit-item .ki-n{color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.kit-item .ki-v{color:var(--text3);white-space:nowrap;flex-shrink:0;}
+.kit-bottom{display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid var(--border);gap:10px;flex-wrap:wrap;}
+.kit-price{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--shopee2);letter-spacing:-.5px;}
+.kit-price small{font-size:10px;color:var(--text3);font-weight:400;margin-left:3px;}
+.kit-stats{display:flex;gap:5px;flex-wrap:wrap;}
+.kit-stat{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:3px;font-weight:600;}
+.kit-stat.lucro{background:rgba(30,215,96,.07);border:1px solid rgba(30,215,96,.18);color:var(--green);}
+.kit-stat.mg{background:rgba(79,158,255,.07);border:1px solid rgba(79,158,255,.18);color:var(--blue);}
+.kit-stat.shopee{background:rgba(238,77,45,.06);border:1px solid rgba(238,77,45,.16);color:var(--shopee2);}
+
+/* ─── MANUAL CALC ─── */
+.mg{display:grid;grid-template-columns:1fr 360px;gap:22px;align-items:start;}
+@media(max-width:860px){.mg{grid-template-columns:1fr;}}
+.ir{margin-bottom:13px;}
+.ir label{display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:.1px;}
+.ir label .ht{font-size:10.5px;color:var(--text3);font-family:var(--mono);font-weight:400;}
+.iw{position:relative;display:flex;align-items:center;}
+.ip{position:absolute;left:12px;font-family:var(--mono);font-size:12px;color:var(--text3);pointer-events:none;z-index:1;}
+.is{position:absolute;right:12px;font-family:var(--mono);font-size:12px;color:var(--text3);pointer-events:none;}
+.iw input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:4px;
+  padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:14px;
+  transition:border-color .15s,box-shadow .15s;outline:none;-moz-appearance:textfield;}
+.iw input::-webkit-inner-spin-button,.iw input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.iw input:focus{border-color:var(--shopee);box-shadow:0 0 0 3px rgba(238,77,45,.1);}
+.iw.pre input{padding-left:28px;}.iw.suf input{padding-right:32px;}
+.tog-row{display:flex;align-items:center;justify-content:space-between;
+  padding:11px 13px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:4px;margin-bottom:10px;cursor:pointer;}
+.tog-l{font-size:13px;color:var(--text2);font-weight:600;}
+.tog-l small{display:block;font-size:10.5px;color:var(--text3);margin-top:2px;font-family:var(--mono);font-weight:400;}
+.tog{position:relative;width:38px;height:21px;flex-shrink:0;}
+.tog input{opacity:0;width:0;height:0;}
+.ts{position:absolute;inset:0;background:var(--bg4);border-radius:21px;cursor:pointer;transition:.15s;border:1px solid var(--border2);}
+.ts::before{content:'';position:absolute;width:15px;height:15px;left:2px;bottom:2px;
+  background:#fff;border-radius:50%;transition:.15s;}
+.tog input:checked+.ts{background:var(--shopee);border-color:var(--shopee);}
+.tog input:checked+.ts::before{transform:translateX(17px);}
+.btn-calc{width:100%;padding:14px;background:var(--shopee);
+  border:none;border-radius:4px;color:#fff;font-family:var(--body);font-size:14px;
+  font-weight:800;cursor:pointer;transition:opacity .15s;letter-spacing:.3px;margin-top:6px;}
+.btn-calc:hover{opacity:.88;}
+
+/* Result panel */
+.rp{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;position:sticky;top:20px;}
+.pbox{text-align:center;padding:24px 14px;background:var(--bg3);border-radius:4px;margin-bottom:18px;border:1px solid var(--border);}
+.plbl{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text3);font-family:var(--mono);font-weight:700;margin-bottom:8px;}
+.pval{font-family:var(--mono);font-size:36px;font-weight:800;color:var(--text);letter-spacing:-2px;}
+.pval span{font-size:18px;color:var(--text3);font-weight:400;}
+.psub{font-size:11px;color:var(--text3);margin-top:5px;font-family:var(--mono);}
+.bkd{display:flex;flex-direction:column;gap:0;margin-bottom:16px;border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;
+  font-size:12px;border-bottom:1px solid var(--border);}
+.brow:last-child{border-bottom:none;}
+.brow:hover{background:rgba(255,255,255,.02);}
+.brow .bl{color:var(--text2);font-weight:500;}
+.brow .bl .bs{color:var(--text3);font-size:10px;font-family:var(--mono);}
+.brow .bv{font-family:var(--mono);font-weight:700;font-size:12px;}
+.vr{color:var(--danger);}.vg{color:var(--green);}.vo{color:var(--shopee2);}.vw{color:var(--text);}
+.mbh{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.mbl{font-size:12px;color:var(--text2);font-weight:500;}
+.mbp{font-family:var(--mono);font-size:16px;font-weight:800;letter-spacing:-1px;}
+.mt{height:5px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:14px;}
+.mf{height:100%;border-radius:99px;transition:width .35s cubic-bezier(.4,0,.2,1),background .25s;min-width:2px;}
+.cal{padding:10px 13px;border-radius:4px;font-size:11px;line-height:1.5;margin-bottom:10px;display:none;font-weight:500;}
+.cal.show{display:block;}
+.caw{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);color:var(--accent);}
+.cad{background:rgba(255,68,68,.07);border:1px solid rgba(255,68,68,.2);color:var(--danger);}
+.cao{background:rgba(30,215,96,.06);border:1px solid rgba(30,215,96,.18);color:var(--green);}
+.ph{text-align:center;padding:32px 14px;color:var(--text3);}
+.ph .ic{font-size:32px;margin-bottom:12px;opacity:.25;}.ph p{font-size:13px;line-height:1.6;}
+.tip{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;
+  background:rgba(245,166,35,.04);border:1px solid rgba(245,166,35,.12);border-radius:4px;margin-bottom:13px;}
+.tip .ti{font-size:14px;flex-shrink:0;margin-top:1px;}.tip p{font-size:11.5px;color:var(--text2);line-height:1.6;}
+.tip strong{color:var(--accent);}
+
+/* ─── FEE TABLE ─── */
+.ftw{overflow-x:auto;}
+table.ft{width:100%;border-collapse:collapse;font-size:12.5px;}
+table.ft th{text-align:left;padding:9px 13px;font-family:var(--mono);font-size:9px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:700;
+  border-bottom:1px solid var(--border);white-space:nowrap;}
+table.ft td{padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--mono);color:var(--text2);}
+table.ft tr:last-child td{border-bottom:none;}
+table.ft tr:hover td{background:rgba(255,255,255,.02);}
+.f1{color:#ff4444;}.f2{color:var(--shopee2);}.f3{color:var(--accent);}.f4{color:var(--blue);}.f5{color:var(--green);}
+.fc{display:inline-flex;align-items:center;padding:2px 8px;border-radius:3px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+
+/* ─── INFO BOXES ─── */
+.ig{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:20px;}
+.ib{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+.ib .il{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;font-family:var(--mono);font-weight:700;margin-bottom:5px;}
+.ib .iv{font-family:var(--disp);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.5px;}
+.ib .is{font-size:10.5px;color:var(--text3);margin-top:3px;font-family:var(--mono);}
+
+/* ─── MISC ─── */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px;}
+footer{margin-top:60px;padding:22px 0;border-top:1px solid var(--border);text-align:center;
+  font-size:10px;color:var(--text3);font-family:var(--mono);letter-spacing:.5px;}
+footer a{color:var(--shopee2);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="hdr">
+    <div class="logo">
+      <div class="logo-icon">W</div>
+      <div class="logo-text"><strong>Widicare</strong><span>Precificador Shopee 2026</span></div>
+    </div>
+    <div class="badges">
+      <div class="badge bo"><span class="bdot"></span>Vendedor Indicado · CNPJ</div>
+      <div class="badge bg">🚚 Shopee Xpress</div>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:32px">
+  <button class="tab active" onclick="sTab('nfe')">📦 NF-e &amp; Produtos</button>
+  <button class="tab" onclick="sTab('calc')">Calculadora Manual</button>
+  <button class="tab" onclick="sTab('tab')">Tabela de Taxas</button>
+  <button class="tab" onclick="sTab('info')">Sobre</button>
+</div>
+
+<!-- ═══ TAB: NF-e & PRODUTOS ═══ -->
+<div id="tab-nfe" class="tab-panel active">
+
+  <!-- XML Import -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Importar XML da Nota Fiscal (NF-e)
+    </div>
+
+    <!-- Mode switcher -->
+    <div class="mode-tabs" style="margin-bottom:14px">
+      <button id="mtab-file" class="mtab-btn on" onclick="setMode('file')">📁 Arquivo</button>
+      <button id="mtab-paste" class="mtab-btn" onclick="setMode('paste')">📋 Colar texto</button>
+    </div>
+
+    <!-- FILE mode -->
+    <div id="mode-file">
+      <div class="xml-zone" id="xzone"
+           ondragover="dov(event)" ondragleave="dlv(event)" ondrop="ddrop(event)">
+        <input type="file" id="xfile" accept=".xml,text/xml,application/xml" multiple onchange="fsel(event)">
+        <div class="xz-icon" id="xzico">📄</div>
+        <div class="xz-title" id="xztit">Arraste os XMLs das NF-e aqui</div>
+        <div class="xz-sub" id="xzsub">ou clique para selecionar · múltiplos arquivos permitidos</div>
+      </div>
+    </div>
+
+    <!-- PASTE mode -->
+    <div id="mode-paste" style="display:none">
+      <div style="position:relative">
+        <textarea id="xmlpaste"
+          placeholder="Cole aqui o conteúdo completo do arquivo XML da NF-e…"
+          oninput="onPasteInput()"
+          style="width:100%;min-height:130px;max-height:260px;resize:vertical;
+                 background:var(--bg3);border:1.5px solid var(--border2);border-radius:9px;
+                 padding:12px 14px;color:var(--text2);font-family:var(--mono);font-size:11px;
+                 outline:none;line-height:1.5;scrollbar-width:thin;
+                 white-space:pre;overflow:auto;word-break:normal;
+                 transition:border-color .18s,box-shadow .18s;"
+          onfocus="this.style.borderColor='var(--shopee)';this.style.boxShadow='0 0 0 3px rgba(238,77,45,.1)'"
+          onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"></textarea>
+        <button id="btnpp" onclick="parsePaste()"
+          style="position:absolute;bottom:10px;right:10px;padding:7px 16px;
+                 background:var(--shopee);border:none;border-radius:7px;color:#fff;
+                 font-size:12px;font-weight:600;cursor:pointer;font-family:var(--mono);
+                 opacity:.4;transition:opacity .18s;pointer-events:none">
+          Processar →
+        </button>
+      </div>
+      <div style="font-size:10.5px;color:var(--text3);font-family:var(--mono);margin-top:7px">
+        Abra o arquivo .xml em qualquer editor de texto, selecione tudo (Ctrl+A) e cole aqui.
+      </div>
+    </div>
+
+    <!-- Loaded state (multi-NF list) -->
+    <div id="nf-list" style="display:none;margin-top:11px;display:none">
+      <div style="font-size:10px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;
+                  letter-spacing:1px;margin-bottom:7px">Notas carregadas</div>
+      <div id="nf-list-inner" style="display:flex;flex-direction:column;gap:5px"></div>
+      <button onclick="clearXml()" style="margin-top:10px;background:none;border:1px solid rgba(231,76,60,.3);
+        color:var(--red);border-radius:7px;padding:5px 13px;font-size:11.5px;cursor:pointer;
+        font-family:var(--mono);transition:background .18s"
+        onmouseover="this.style.background='rgba(231,76,60,.1)'" onmouseout="this.style.background='none'">
+        ✕ Limpar tudo
+      </button>
+    </div>
+    <div id="parcwrap" style="display:none;margin-top:11px"></div>
+  </div>
+
+  <!-- Global bar -->
+  <div id="gbar">
+    <span class="gb-lbl">Padrão para todos:</span>
+    <div class="gb-field"><label>Margem alvo</label>
+      <div class="gb-iw"><input type="number" class="gb-in np hs" id="gmg" value="25" step="0.5" min="0" max="90">
+      <span class="gb-suf">%</span></div></div>
+    <div class="gb-field"><label>Embalagem</label>
+      <div class="gb-iw"><span class="gb-pre">R$</span>
+      <input type="number" class="gb-in" id="gemb" placeholder="0,00" step="0.01" min="0"></div></div>
+    <div class="gb-field"><label>Op. fixo</label>
+      <div class="gb-iw"><span class="gb-pre">R$</span>
+      <input type="number" class="gb-in" id="gop" placeholder="0,00" step="0.01" min="0"></div></div>
+    <div class="gb-div"></div>
+    <button class="btn-gb orange" onclick="applyGlobal()">↻ Aplicar a todos</button>
+    <button class="btn-gb green" onclick="autoAll()">⚡ Auto-precificar todos</button>
+    <!-- Shopee transaction fee (shown only when Shopee active) -->
+    <div id="shopee-txn-wrap" class="gb-field" style="margin-left:auto">
+      <label style="font-size:11px;color:var(--text3)">Taxa transação</label>
+      <div class="gb-iw">
+        <input type="number" class="gb-in np hs" id="shopee-txn" value="5" step="0.5" min="0" max="20"
+               title="Taxa de transação/pagamento Shopee (ex: 5% para cartão). Ajuste conforme seu extrato do Seller Center."
+               oninput="prods.forEach((_,i)=>rc(i));gerarKits();renderCompare()">
+        <span class="gb-suf">%</span>
+      </div>
+      <span style="font-size:9.5px;color:var(--text3);font-family:var(--mono);white-space:nowrap">txn</span>
+    </div>
+  </div>
+
+  <!-- Marketplace selector -->
+  <div id="mp-selector" style="display:none;margin-bottom:20px">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                color:var(--text3);font-family:var(--mono);margin-bottom:10px">
+      Canal de venda — selecione para calcular taxas
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px" id="mp-btns"></div>
+    <div id="mp-note" style="font-size:10.5px;color:var(--text3);font-family:var(--mono);
+                margin-top:10px;padding:8px 12px;background:var(--bg2);
+                border:1px solid var(--border);border-radius:4px;line-height:1.6"></div>
+  </div>
+
+  <!-- Product board -->
+  <div id="product-board">
+    <div class="board-count" id="bcount"></div>
+    <div id="pcards"></div>
+    <div class="board-sum" id="bsum">
+      <div class="bs-ttl">📊 Resumo consolidado (qty × preço)</div>
+      <div class="bs-grid">
+        <div class="bs-kv"><div class="k">Itens precificados</div><div class="v" id="bsp">—</div></div>
+        <div class="bs-kv"><div class="k">Custo total investido</div><div class="v o" id="bsc">—</div></div>
+        <div class="bs-kv"><div class="k">Receita esperada</div><div class="v a" id="bsr">—</div></div>
+        <div class="bs-kv"><div class="k">Lucro total esperado</div><div class="v g" id="bsl">—</div></div>
+        <div class="bs-kv"><div class="k">Margem média</div><div class="v g" id="bsm">—</div></div>
+        <div class="bs-kv"><div class="k">Total taxas Shopee</div><div class="v o" id="bss">—</div></div>
+      </div>
+    </div>
+
+    <!-- KITS -->
+    <div id="kits-section" style="display:none;margin-top:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--text3)">🎁 Sugestões de kits</span>
+          <span id="kits-count" style="background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.2);color:var(--accent);border-radius:4px;padding:1px 7px;font-size:10px;font-family:var(--mono)"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:6px 12px">
+          <span style="font-size:11.5px;color:var(--text2)">Margem dos kits</span>
+          <div style="position:relative;display:flex;align-items:center">
+            <input type="number" id="kit-mg" value="30" min="0" max="90" step="0.5"
+              style="width:62px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;
+                     padding:5px 22px 5px 8px;color:var(--text);font-family:var(--mono);font-size:12.5px;
+                     outline:none;-moz-appearance:textfield;transition:border-color .18s"
+              onfocus="this.style.borderColor='var(--shopee)'" onblur="this.style.borderColor='var(--border)'"
+              oninput="gerarKits()">
+            <span style="position:absolute;right:7px;font-family:var(--mono);font-size:11px;color:var(--text3);pointer-events:none">%</span>
+          </div>
+          <button onclick="gerarKits()"
+            style="padding:5px 12px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);
+                   border-radius:7px;color:var(--accent);font-size:11.5px;font-weight:600;
+                   cursor:pointer;font-family:var(--mono);transition:background .18s"
+            onmouseover="this.style.background='rgba(245,166,35,.18)'" onmouseout="this.style.background='rgba(245,166,35,.1)'">
+            ↻ Recalcular
+          </button>
+        </div>
+      </div>
+      <div id="kits-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px"></div>
+    </div>
+
+    <!-- Marketplace comparison -->
+    <div id="compare-section" style="display:none;margin-top:20px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                  color:var(--text3);font-family:var(--mono);margin-bottom:12px">
+        📊 Comparativo de canais — todos os marketplaces por produto
+      </div>
+      <div id="compare-cards"></div>
+    </div>
+  </div>
+</div>
+<div id="tab-calc" class="tab-panel">
+  <div class="mg">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Custos do produto</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="ir"><label>Custo de compra <span class="ht">por un.</span></label><div class="iw pre"><span class="ip">R$</span><input type="number" id="cc" placeholder="0,00" step="0.01" min="0" oninput="autoCalc()"></div></div>
+          <div class="ir"><label>Embalagem <span class="ht">por un.</span></label><div class="iw pre"><span class="ip">R$</span><input type="number" id="ce" placeholder="0,00" step="0.01" min="0" oninput="autoCalc()"></div></div>
+          <div class="ir"><label>Op. fixo <span class="ht">por un.</span></label><div class="iw pre"><span class="ip">R$</span><input type="number" id="co" placeholder="0,00" step="0.01" min="0" oninput="autoCalc()"></div></div>
+          <div class="ir"><label>Outros <span class="ht">por un.</span></label><div class="iw pre"><span class="ip">R$</span><input type="number" id="cx" placeholder="0,00" step="0.01" min="0" oninput="autoCalc()"></div></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Precificação</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px">
+          <div class="ir" style="margin-bottom:0"><label>Margem alvo <span class="ht">sobre venda</span></label><div class="iw suf"><input type="number" id="cm" placeholder="25" step="0.5" min="0" max="90" oninput="autoCalc()"><span class="is">%</span></div></div>
+          <div class="ir" style="margin-bottom:0"><label>Preço manual <span class="ht">sobrescreve</span></label><div class="iw pre"><span class="ip">R$</span><input type="number" id="cp" placeholder="(auto)" step="0.01" min="0" oninput="autoCalc()"></div></div>
+        </div>
+        <div class="tip"><span class="ti">💡</span><p>Deixe o <strong>preço manual em branco</strong> para calcular automaticamente pela margem alvo.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Shopee</div>
+        <label class="tog-row" for="ccamp"><div class="tog-l">Campanha de Destaque<small>+2,5% sobre comissão</small></div><label class="tog"><input type="checkbox" id="ccamp" onchange="autoCalc()"><span class="ts"></span></label></label>
+        <div class="ir"><label>Desconto / cupom <span class="ht">R$ por un.</span></label><div class="iw pre"><span class="ip">R$</span><input type="number" id="cd" placeholder="0,00" step="0.01" min="0" oninput="autoCalc()"></div></div>
+        <button class="btn-calc" onclick="calcManual()">Calcular →</button>
+      </div>
+    </div>
+    <div>
+      <div class="rp">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--text3)">Resultado</div>
+          <div id="cfb" style="padding:3px 9px;border-radius:5px;font-family:var(--mono);font-size:10.5px;font-weight:600;background:rgba(100,100,130,.15);color:var(--text3)">—</div>
+        </div>
+        <div id="cph" class="ph"><div class="ic">📊</div><p>Preencha os custos<br>e clique em <strong style="color:var(--text2)">Calcular</strong></p></div>
+        <div id="cco" style="display:none">
+          <div class="pbox"><div class="plbl">Preço de Venda Shopee</div><div class="pval" id="cpv"><span>R$</span> —</div><div class="psub" id="cps"></div></div>
+          <div class="cal caw" id="caw"></div><div class="cal cad" id="cad"></div><div class="cal cao" id="cao"></div>
+          <div style="margin-bottom:15px"><div class="mbh"><span class="mbl">Margem líquida real</span><span class="mbp" id="cmp">—</span></div><div class="mt"><div class="mf" id="cmf" style="width:0%"></div></div></div>
+          <div class="bkd" id="cbkd"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB: TABELA ═══ -->
+<div id="tab-tab" class="tab-panel">
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">Comissões Shopee Brasil 2026 · CNPJ / Vendedor Indicado</div>
+    <div class="tip"><span class="ti">ℹ️</span><p>Vigência <strong>março/2026</strong>. Teto de R$100 removido. Frete Grátis obrigatório.</p></div>
+    <div class="ftw"><table class="ft"><thead><tr><th>Faixa</th><th>Preço do produto</th><th>Comissão %</th><th>Tarifa fixa</th><th>Custo efetivo</th></tr></thead><tbody>
+      <tr><td><span class="fc f1" style="background:rgba(231,76,60,.1)">F1</span></td><td class="f1">R$ 0 – R$ 7,99</td><td><strong class="f1">50%</strong></td><td>R$ 0,00</td><td class="f1">~50%</td></tr>
+      <tr><td><span class="fc f2" style="background:rgba(255,107,71,.1)">F2</span></td><td class="f2">R$ 8 – R$ 79,99</td><td><strong class="f2">20%</strong></td><td>R$ 4,00</td><td class="f2">25–70%</td></tr>
+      <tr><td><span class="fc f3" style="background:rgba(245,166,35,.1)">F3</span></td><td class="f3">R$ 80 – R$ 99,99</td><td><strong class="f3">14%</strong></td><td>R$ 16,00</td><td class="f3">30–34%</td></tr>
+      <tr><td><span class="fc f4" style="background:rgba(59,158,255,.1)">F4</span></td><td class="f4">R$ 100 – R$ 199,99</td><td><strong class="f4">14%</strong></td><td>R$ 20,00</td><td class="f4">24–34%</td></tr>
+      <tr><td><span class="fc f5" style="background:rgba(46,204,113,.1)">F5</span></td><td class="f5">R$ 200+</td><td><strong class="f5">14%</strong></td><td>R$ 26,00</td><td class="f5">17–27%</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">⚠️ Armadilha das fronteiras</div>
+    <div class="ftw"><table class="ft"><thead><tr><th>Preço</th><th>Faixa</th><th>Comissão</th><th>Tarifa</th><th>Total taxas</th><th>Diferença</th></tr></thead><tbody>
+      <tr><td>R$ 79,99</td><td class="f2">F2</td><td>R$ 16,00</td><td>R$ 4,00</td><td><strong class="f2">R$ 20,00</strong></td><td>—</td></tr>
+      <tr><td>R$ 80,00</td><td class="f3">F3</td><td>R$ 11,20</td><td>R$ 16,00</td><td><strong class="f1">R$ 27,20</strong></td><td><strong class="f1">+R$ 7,20</strong></td></tr>
+      <tr><td>R$ 99,99</td><td class="f3">F3</td><td>R$ 14,00</td><td>R$ 16,00</td><td><strong class="f3">R$ 30,00</strong></td><td>—</td></tr>
+      <tr><td>R$ 100,00</td><td class="f4">F4</td><td>R$ 14,00</td><td>R$ 20,00</td><td><strong class="f1">R$ 34,00</strong></td><td><strong class="f1">+R$ 4,00</strong></td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Subsídios (Shopee banca — sem custo pro vendedor)</div>
+    <div class="ftw"><table class="ft"><thead><tr><th>Programa</th><th>Regra</th><th>Custo para o vendedor</th></tr></thead><tbody>
+      <tr><td>🚚 Frete Grátis</td><td>Subsídio R$20–R$40/item (obrigatório)</td><td class="f5">R$ 0,00</td></tr>
+      <tr><td>💳 Subsídio PIX</td><td>5% (R$80–R$499) / 8% (R$500+) p/ comprador</td><td class="f5">R$ 0,00</td></tr>
+      <tr><td>🏷️ Campanha Destaque</td><td>+2,5% sobre comissão no período</td><td class="f1">+2,5% (voluntário)</td></tr>
+    </tbody></table></div>
+  </div>
+</div>
+
+<!-- ═══ TAB: SOBRE ═══ -->
+<div id="tab-info" class="tab-panel">
+  <div class="ig">
+    <div class="ib"><div class="il">Comissão</div><div class="iv" style="color:var(--shopee2)">14–50%</div><div class="is">por faixa de preço</div></div>
+    <div class="ib"><div class="il">Tarifa fixa</div><div class="iv" style="color:var(--accent)">R$0–26</div><div class="is">por item vendido</div></div>
+    <div class="ib"><div class="il">Teto R$100</div><div class="iv" style="color:var(--red)">Removido</div><div class="is">desde março/2026</div></div>
+    <div class="ib"><div class="il">Frete Grátis</div><div class="iv" style="color:var(--green)">Obrig.</div><div class="is">subsidiado pela Shopee</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Mudanças março/2026</div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--text2)">
+      <div style="display:flex;gap:10px;padding:10px;background:var(--bg3);border-radius:8px"><span style="color:var(--red);font-size:14px;flex-shrink:0">❌</span><div><strong style="color:var(--text)">Teto de R$100 removido</strong><br><span style="color:var(--text3);font-size:11px">Comissão escala linearmente. Produto de R$1.000 paga R$140 + R$26.</span></div></div>
+      <div style="display:flex;gap:10px;padding:10px;background:var(--bg3);border-radius:8px"><span style="color:var(--red);font-size:14px;flex-shrink:0">❌</span><div><strong style="color:var(--text)">Frete Grátis obrigatório</strong><br><span style="color:var(--text3);font-size:11px">Todos os vendedores entram automaticamente. Shopee subsidia R$20–R$40.</span></div></div>
+      <div style="display:flex;gap:10px;padding:10px;background:var(--bg3);border-radius:8px"><span style="color:var(--shopee2);font-size:14px;flex-shrink:0">⚠️</span><div><strong style="color:var(--text)">5 faixas escalonadas</strong><br><span style="color:var(--text3);font-size:11px">R$0,01 a mais no preço pode custar R$7,20 a mais em tarifa.</span></div></div>
+      <div style="display:flex;gap:10px;padding:10px;background:var(--bg3);border-radius:8px"><span style="color:var(--green);font-size:14px;flex-shrink:0">✅</span><div><strong style="color:var(--text)">Subsídio PIX sem custo ao vendedor</strong><br><span style="color:var(--text3);font-size:11px">5–8% de desconto para o comprador, bancado pela Shopee.</span></div></div>
+      <div style="display:flex;gap:10px;padding:10px;background:var(--bg3);border-radius:8px"><span style="color:var(--green);font-size:14px;flex-shrink:0">✅</span><div><strong style="color:var(--text)">CNPJ sem taxa adicional</strong><br><span style="color:var(--text3);font-size:11px">CPF com +450 pedidos/90 dias paga +R$3/item. CNPJ segue tabela padrão.</span></div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+<footer><div class="wrap">Widicare · Precificador Shopee 2026 · Taxas vigentes desde março/2026 — <a href="https://seller.shopee.com.br" target="_blank">Shopee Seller Center</a></div></footer>
+
+<script>
+// ══ MARKETPLACE CONFIG ══
+const MP = {
+  shopee: {
+    id:'shopee', name:'Shopee', short:'Shopee', icon:'🛍️', color:'#ee4d2d',
+    model:'faixas',
+    txn: 0.05, // taxa de transação padrão 5% (ajustável)
+    note:'CNPJ · Vendedor Indicado · março/2026 · inclui taxa de transação',
+    details:'Taxas por faixas de preço + taxa de transação (pagamento). Frete Grátis subsidiado pela Shopee. Ajuste a taxa de transação conforme seu extrato do Seller Center.'
+  },
+  ml_classico: {
+    id:'ml_classico', name:'ML Clássico', short:'ML Clássico', icon:'🟡', color:'#ffe600', textColor:'#1a1a1a',
+    model:'simple', comm:0.13, fixed:0, fixedLow:6, lowThreshold:79,
+    note:'Cosméticos · anúncio Clássico · 2026',
+    details:'13% de comissão. Taxa fixa de R$6 para produtos abaixo de R$79. Sem parcelamento automático.'
+  },
+  ml_premium: {
+    id:'ml_premium', name:'ML Premium', short:'ML Premium', icon:'⭐', color:'#ffe600', textColor:'#1a1a1a',
+    model:'simple', comm:0.165, fixed:0, fixedLow:6, lowThreshold:79,
+    note:'Cosméticos · anúncio Premium · parcelamento 12x sem juros',
+    details:'16,5% de comissão. Taxa fixa de R$6 para produtos abaixo de R$79. Parcelamento em 12x sem juros incluso.'
+  },
+  amazon: {
+    id:'amazon', name:'Amazon', short:'Amazon', icon:'📦', color:'#ff9900',
+    model:'simple', comm:0.13, fixed:2, minComm:1,
+    note:'Beleza/Cosméticos · Plano Individual · 2026',
+    details:'13% de comissão (categoria beleza). Taxa fixa de R$2/item no plano individual. Plano profissional: R$19/mês sem taxa por item.'
+  },
+  belezanaweb: {
+    id:'belezanaweb', name:'Beleza na Web', short:'BnW', icon:'💄', color:'#d4006e',
+    model:'simple', comm:0.18, fixed:0,
+    note:'Cosméticos · Grupo Boticário · estimativa 14–25%',
+    details:'Comissão entre 14% e 25% por acordo comercial. Sem taxa fixa. Necessário CNPJ e aprovação de curadoria. Estimativa usada: 18%.'
+  },
+  rd: {
+    id:'rd', name:'RD Saúde', short:'RD', icon:'💊', color:'#00a859',
+    model:'simple', comm:0.15, fixed:0,
+    note:'Droga Raia & Drogasil · beleza/dermocosméticos · estimativa',
+    details:'Comissão negociada por contrato. Estimativa de mercado: ~15% para cosméticos. Incide sobre produto + frete.'
+  },
+  epoca: {
+    id:'epoca', name:'Época Cosméticos', short:'Época', icon:'✨', color:'#c41230',
+    model:'simple', comm:0.14, fixed:0,
+    note:'Cosméticos · Grupo Magalu · estimativa',
+    details:'Marketplace de beleza do Grupo Magalu. Comissão estimada em ~14%. Foco em perfumaria, dermocosméticos e maquiagem.'
+  },
+};
+
+// ── Shopee faixas (existing) ──
+const FX=[
+  {min:0,   max:7.99,     c:.50,f:0,  lb:'Faixa 1',cl:'f1',co:'#e74c3c'},
+  {min:8,   max:79.99,    c:.20,f:4,  lb:'Faixa 2',cl:'f2',co:'#ff6b47'},
+  {min:80,  max:99.99,    c:.14,f:16, lb:'Faixa 3',cl:'f3',co:'#f5a623'},
+  {min:100, max:199.99,   c:.14,f:20, lb:'Faixa 4',cl:'f4',co:'#3b9eff'},
+  {min:200, max:Infinity, c:.14,f:26, lb:'Faixa 5',cl:'f5',co:'#2ecc71'},
+];
+const gF=p=>FX.find(f=>p>=f.min&&p<=f.max)||FX[4];
+
+// ── Active marketplace state ──
+let activeMpId = 'shopee';
+const getMP = ()=>MP[activeMpId];
+
+// ── Fee calculation (marketplace-aware) ──
+function calcFeesMp(pv, mp, camp=false){
+  if(mp.model==='faixas'){
+    const ex=camp?.025:0;
+    const fx=gF(pv);
+    // Taxa de transação — lida do input se disponível, senão usa default do config
+    const txnEl=document.getElementById('shopee-txn');
+    const txnRate=(txnEl ? parseFloat(txnEl.value)||0 : (mp.txn||0)) / 100;
+    const comm=(fx.c+ex)*pv;
+    const txn=txnRate*pv;
+    const tar=fx.f;
+    const tot=comm+txn+tar;
+    return{comm,txn,tar,tot,label:fx.lb,color:fx.co,pct:(fx.c+ex)*100,txnPct:txnRate*100,note:camp?'+2,5% campanha':''};
+  }
+  // simple model
+  let fixedAmt = mp.fixed||0;
+  if(mp.fixedLow && pv < mp.lowThreshold) fixedAmt = mp.fixedLow;
+  const commAmt = mp.comm * pv;
+  const tot = Math.max(commAmt, mp.minComm||0) + fixedAmt;
+  return{comm:commAmt, txn:0, tar:fixedAmt, tot, label:mp.short, color:mp.color,
+         pct:mp.comm*100, txnPct:0, note:mp.note};
+}
+
+function calcIdealMp(ct, mg, mp, camp=false){
+  if(mp.model==='faixas'){
+    const ex=camp?.025:0;
+    const txnEl=document.getElementById('shopee-txn');
+    const txnRate=(txnEl ? parseFloat(txnEl.value)||0 : (mp.txn||0)) / 100;
+    let p=ct/(1-mg/100-.20-ex-txnRate);
+    for(let i=0;i<60;i++){
+      const f=gF(p),np=(ct+f.f)/(1-f.c-ex-txnRate-mg/100);
+      if(Math.abs(np-p)<.001){p=np;break;}p=np;
+    }
+    return Math.ceil(p*100)/100;
+  }
+  const fixFn = p => (mp.fixedLow && p < mp.lowThreshold) ? mp.fixedLow : (mp.fixed||0);
+  let p = (ct + (mp.fixed||0)) / (1 - mp.comm - mg/100);
+  for(let i=0;i<40;i++){
+    const fix=fixFn(p), np=(ct+fix)/(1-mp.comm-mg/100);
+    if(Math.abs(np-p)<.001){p=np;break;} p=np;
+  }
+  return Math.ceil(p*100)/100;
+}
+
+// Backwards compat wrappers (Shopee-only calcs reuse)
+function calcIdeal(ct,mg,camp=false){return calcIdealMp(ct,mg,MP.shopee,camp);}
+
+const R=n=>'R$ '+n.toFixed(2).replace('.',',');
+const P=n=>n.toFixed(1).replace('.',',')+' %';
+const D=s=>{if(!s)return'—';const p=s.substring(0,10).split('-');return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:s.substring(0,10);};
+
+const TBS=['nfe','calc','tab','info'];
+function sTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',TBS[i]===id));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ══ XML / MULTI-NF STATE ══
+let notas=[];  // [{fname,nNF,dhEmi,emitNome,eCNPJ,vNF,vICMS,parc,prods:[]}]
+let prods=[];  // flat array rebuilt from notas, each item has .nfLabel
+
+function rebuildProds(){
+  prods=[];
+  notas.forEach((nf,ni)=>nf.prods.forEach(p=>prods.push({...p,nfIdx:ni,nfLabel:`NF ${nf.nNF} · ${nf.emitNome}`})));
+}
+
+function dov(e){e.preventDefault();document.getElementById('xzone').classList.add('drag');}
+function dlv(e){document.getElementById('xzone').classList.remove('drag');}
+function ddrop(e){
+  e.preventDefault();document.getElementById('xzone').classList.remove('drag');
+  [...e.dataTransfer.files].forEach(f=>proc(f));
+}
+function fsel(e){[...e.target.files].forEach(f=>proc(f));}
+function proc(file){
+  const r=new FileReader();
+  r.onload=ev=>pNFe(ev.target.result,file.name);
+  r.onerror=()=>xerr('Erro ao ler: '+file.name);
+  r.readAsText(file,'UTF-8');
+}
+
+function sNS(x){return x.replace(/\s+xmlns(?::\w+)?\s*=\s*"[^"]*"/g,'').replace(/<(\/?)\w+:/g,'<$1');}
+
+function pNFe(xml,fname){
+  try{
+    const doc=new DOMParser().parseFromString(sNS(xml),'application/xml');
+    if(doc.querySelector('parsererror')){xerr('XML inválido: '+fname);return;}
+    const q=(el,t)=>el.querySelector(t);
+    const qt=(el,t)=>{const n=q(el,t);return n?n.textContent.trim():'';};
+    const qf=(el,t)=>parseFloat(qt(el,t).replace(',','.'))||0;
+    const inf=q(doc,'infNFe');
+    if(!inf){xerr('NF-e não reconhecida: '+fname);return;}
+    const ide=q(inf,'ide'),emit=q(inf,'emit'),ict=q(inf,'ICMSTot'),cobr=q(inf,'cobr');
+    const nNF=qt(ide,'nNF'),dhEmi=qt(ide,'dhEmi')||qt(ide,'dEmi');
+    const eNome=qt(emit,'xFant')||qt(emit,'xNome')||'—',eCNPJ=qt(emit,'CNPJ');
+    const vNF=qf(ict,'vNF'),vICMS=qf(ict,'vICMS');
+    const dups=cobr?[...cobr.querySelectorAll('dup')]:[];
+    const parc=dups.map(d=>({num:qt(d,'nDup'),venc:D(qt(d,'dVenc')),val:qf(d,'vDup')}));
+    const detEls=[...inf.querySelectorAll('det')];
+    if(!detEls.length){xerr('Sem itens: '+fname);return;}
+    const nfProds=detEls.map((det,idx)=>{
+      const prod=q(det,'prod'),imp=q(det,'imposto'),ras=q(det,'rastro');
+      if(!prod)return null;
+      const icE=imp?q(imp,'ICMS'):null,icI=icE?icE.firstElementChild:null;
+      return{idx,cProd:qt(prod,'cProd'),xProd:qt(prod,'xProd')||`Produto ${idx+1}`,
+        ean:qt(prod,'cEAN'),ncm:qt(prod,'NCM'),cfop:qt(prod,'CFOP'),
+        uCom:qt(prod,'uCom')||'UN',qCom:qf(prod,'qCom')||1,
+        vUnCom:qf(prod,'vUnCom'),vProd:qf(prod,'vProd'),
+        nLote:ras?qt(ras,'nLote'):'',dFab:ras?D(qt(ras,'dFab')):'',dVal:ras?D(qt(ras,'dVal')):'',
+        pICMS:icI?qf(icI,'pICMS'):0,vICMSi:icI?qf(icI,'vICMS'):0};
+    }).filter(Boolean);
+    if(!nfProds.length){xerr('Sem produtos: '+fname);return;}
+
+    // Dedupe by NF number — replace if already loaded
+    const existIdx=notas.findIndex(n=>n.nNF===nNF&&n.emitNome===eNome);
+    const nfObj={fname,nNF,dhEmi,emitNome:eNome,eCNPJ,vNF,vICMS,parc,prods:nfProds};
+    if(existIdx>=0) notas[existIdx]=nfObj;
+    else notas.push(nfObj);
+
+    rebuildProds();
+    renderNFList();
+    renderBoard();
+
+    // Zone feedback
+    document.getElementById('xzone').classList.add('ok');
+    document.getElementById('xzico').textContent='✅';
+    document.getElementById('xztit').textContent=`${notas.length} nota${notas.length>1?'s':''} carregada${notas.length>1?'s':''}`;
+    document.getElementById('xzsub').textContent='Arraste mais XMLs para adicionar · ou clique para selecionar';
+    document.getElementById('gbar').classList.add('show');
+
+  }catch(e){console.error(e);xerr('Erro: '+e.message);}
+}
+
+function renderNFList(){
+  const wrap=document.getElementById('nf-list');
+  wrap.style.display='block';
+  document.getElementById('nf-list-inner').innerHTML=notas.map((nf,ni)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 13px;
+                background:var(--bg3);border:1px solid var(--border);border-radius:9px">
+      <div style="width:28px;height:28px;background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);
+                  border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">🧾</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+          NF ${nf.nNF} · ${nf.emitNome}
+        </div>
+        <div style="font-size:10.5px;color:var(--text3);font-family:var(--mono);margin-top:1px">
+          ${D(nf.dhEmi)} · ${nf.prods.length} item${nf.prods.length>1?'s':''} · ${R(nf.vNF)}${nf.vICMS>0?' · ICMS '+R(nf.vICMS):''}
+        </div>
+        ${nf.parc.length?`<div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:2px">
+          💳 ${nf.parc.map(p=>R(p.val)+' (vence '+p.venc+')').join(' · ')}
+        </div>`:''}
+      </div>
+      <button onclick="removeNF(${ni})"
+        style="background:none;border:1px solid rgba(231,76,60,.25);color:var(--red);flex-shrink:0;
+               border-radius:6px;padding:3px 8px;font-size:10.5px;cursor:pointer;font-family:var(--mono)"
+        onmouseover="this.style.background='rgba(231,76,60,.1)'" onmouseout="this.style.background='none'">✕</button>
+    </div>`).join('');
+}
+
+function removeNF(ni){
+  notas.splice(ni,1);
+  if(notas.length===0){clearXml();return;}
+  rebuildProds();
+  renderNFList();
+  renderBoard();
+  document.getElementById('xztit').textContent=`${notas.length} nota${notas.length>1?'s':''} carregada${notas.length>1?'s':''}`;
+}
+
+// ══ MARKETPLACE SELECTOR ══
+function initMpSelector(){
+  const wrap=document.getElementById('mp-btns');
+  wrap.innerHTML=Object.values(MP).map(m=>`
+    <button onclick="selectMp('${m.id}')" id="mpb-${m.id}"
+      style="display:flex;align-items:center;gap:6px;padding:7px 14px;
+             border-radius:4px;border:1px solid var(--border);background:var(--bg3);
+             color:var(--text3);font-size:12px;font-weight:600;cursor:pointer;
+             font-family:var(--body);transition:all .15s;white-space:nowrap">
+      <span>${m.icon}</span><span>${m.name}</span>
+    </button>`).join('');
+  document.getElementById('mp-selector').style.display='block';
+  selectMp(activeMpId);
+}
+
+function selectMp(id){
+  activeMpId=id;
+  const m=MP[id];
+  // Update button styles
+  Object.values(MP).forEach(mp=>{
+    const btn=document.getElementById('mpb-'+mp.id);
+    if(!btn)return;
+    const isActive=mp.id===id;
+    btn.style.background=isActive?m.color+'22':'var(--bg3)';
+    btn.style.borderColor=isActive?m.color:'var(--border)';
+    btn.style.color=isActive?(m.textColor||'#fff'):'var(--text3)';
+    btn.style.boxShadow=isActive?`0 0 0 1px ${m.color}44`:'none';
+  });
+  // Show txn field only for Shopee
+  const txnWrap=document.getElementById('shopee-txn-wrap');
+  if(txnWrap) txnWrap.style.display=(id==='shopee')?'flex':'none';
+  document.getElementById('mp-note').innerHTML=
+    `<strong style="color:${m.color}">${m.icon} ${m.name}</strong> — ${m.details}`;
+  // Recalculate all cards
+  if(prods.length) prods.forEach((_,i)=>rc(i));
+  gerarKits();
+  renderCompare();
+}
+
+// ══ PRODUCT BOARD ══
+function renderBoard(){
+  const mg=parseFloat(document.getElementById('gmg').value)||25;
+  const total=prods.length,nfCount=notas.length;
+  document.getElementById('bcount').innerHTML=
+    `<strong>${total}</strong> produto${total>1?'s':''} de <strong>${nfCount}</strong> nota${nfCount>1?'s':''} — defina os preços de venda abaixo`;
+
+  document.getElementById('pcards').innerHTML=prods.map((p,i)=>`
+  <div class="prod-card" id="pc${i}" style="animation-delay:${i*55}ms">
+    <div class="pc-hdr">
+      <div class="pc-hl">
+        <div class="pc-codes">
+          ${notas.length>1?`<span class="chip" style="color:var(--blue);border-color:rgba(59,158,255,.22);background:rgba(59,158,255,.06)">${p.nfLabel}</span>`:''}
+          ${p.cProd?`<span class="chip">${p.cProd}</span>`:''}
+          ${p.ean?`<span class="chip">EAN ${p.ean}</span>`:''}
+          ${p.ncm?`<span class="chip">NCM ${p.ncm}</span>`:''}
+          ${p.cfop?`<span class="chip">CFOP ${p.cfop}</span>`:''}
+        </div>
+        <div class="pc-name">${p.xProd}</div>
+        <div class="pc-meta">
+          ${p.nLote?`<span class="chip lote">🔖 Lote ${p.nLote}</span>`:''}
+          ${p.dFab?`<span class="chip">Fab. ${p.dFab}</span>`:''}
+          ${p.dVal?`<span class="chip val">⏱ Val. ${p.dVal}</span>`:''}
+        </div>
+      </div>
+      <div id="fb${i}" class="fbadge" style="background:rgba(100,100,130,.15);color:var(--text3);border:1px solid rgba(100,100,130,.2)">—</div>
+    </div>
+
+    <div class="pc-body">
+      <div class="pc-costs">
+        <div class="pc-ctitle">Custos / unidade</div>
+        <div class="pc-crow"><span>Custo NF-e</span><span style="font-family:var(--mono);font-weight:600;color:var(--text)">${R(p.vUnCom)}</span></div>
+        <div class="pc-crow"><span>Embalagem</span><div class="mw"><span class="mp">R$</span><input type="number" class="mi" id="emb${i}" placeholder="0,00" step="0.01" min="0" oninput="rc(${i})"></div></div>
+        <div class="pc-crow"><span>Op. fixo</span><div class="mw"><span class="mp">R$</span><input type="number" class="mi" id="op${i}" placeholder="0,00" step="0.01" min="0" oninput="rc(${i})"></div></div>
+        <div class="pc-crow tot"><span>Total custo</span><span id="tc${i}" style="font-family:var(--mono)">${R(p.vUnCom)}</span></div>
+        <div class="pc-note">
+          Comprado: <strong>${p.qCom.toLocaleString('pt-BR')} ${p.uCom}</strong> · NF: <strong>${R(p.vProd)}</strong>
+          ${p.pICMS>0?`<br>ICMS entrada: <strong style="color:var(--red)">${R(p.vICMSi)} (${p.pICMS}%)</strong>`:''}
+        </div>
+      </div>
+
+      <div class="pc-pricing">
+        <div class="pc-ptop">
+          <div>
+            <div class="mfl">Margem alvo</div>
+            <div class="mw" style="width:76px">
+              <input type="number" class="mi" id="mg${i}" value="${mg}" placeholder="25" step="0.5" min="0" max="90"
+                     style="padding-left:8px;padding-right:20px;width:76px" oninput="rc(${i})">
+              <span style="position:absolute;right:6px;font-family:var(--mono);font-size:10.5px;color:var(--text3)">%</span>
+            </div>
+          </div>
+          <div class="sg-box">
+            <div class="mfl" style="text-align:right">Preço sugerido</div>
+            <div class="sg-val" id="sg${i}">—</div>
+            <div class="sg-sub" id="sgs${i}"></div>
+          </div>
+        </div>
+        <div>
+          <div class="pc-plbl">Preço de venda na Shopee</div>
+          <div class="pv-row">
+            <span class="pv-pre">R$</span>
+            <input type="number" class="pv-in" id="pv${i}" placeholder="0,00" step="0.01" min="0" oninput="oc(${i})">
+            <button class="btn-auto" onclick="applyAuto(${i})">Auto ↑</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pc-res" id="pr${i}">
+      <div class="pc-res-empty">← Defina o preço de venda ou clique em <strong>Auto ↑</strong></div>
+    </div>
+  </div>`).join('');
+
+  document.getElementById('product-board').classList.add('show');
+  document.getElementById('bsum').classList.add('show');
+  initMpSelector();
+  prods.forEach((_,i)=>rc(i));
+  gerarKits();
+  renderCompare();
+}
+
+function gCT(i){
+  const p=prods[i];
+  return p.vUnCom+(parseFloat(document.getElementById(`emb${i}`)?.value)||0)+(parseFloat(document.getElementById(`op${i}`)?.value)||0);
+}
+
+function rc(i){
+  const mp=getMP(),ct=gCT(i),mg=parseFloat(document.getElementById(`mg${i}`)?.value)||25;
+  document.getElementById(`tc${i}`).textContent=R(ct);
+  const sg=calcIdealMp(ct,mg,mp);
+  document.getElementById(`sg${i}`).textContent=R(sg);
+  document.getElementById(`sgs${i}`).textContent=`${mg}% margem · ${mp.short}`;
+  const pv=parseFloat(document.getElementById(`pv${i}`)?.value);
+  if(!isNaN(pv)&&pv>0) renderRes(i,pv,ct);
+  else {
+    document.getElementById(`pr${i}`).innerHTML='<div class="pc-res-empty">← Defina o preço de venda ou clique em <strong>Auto ↑</strong></div>';
+    const fb=document.getElementById(`fb${i}`);fb.textContent='—';fb.style.background='rgba(100,100,130,.15)';fb.style.color='var(--text3)';fb.style.borderColor='rgba(100,100,130,.2)';
+  }
+  updSum();
+}
+
+function oc(i){
+  const pv=parseFloat(document.getElementById(`pv${i}`)?.value);
+  if(!isNaN(pv)&&pv>0) renderRes(i,pv,gCT(i));
+  else document.getElementById(`pr${i}`).innerHTML='<div class="pc-res-empty">← Defina o preço de venda ou clique em <strong>Auto ↑</strong></div>';
+  updSum();
+}
+
+function applyAuto(i){
+  const mp=getMP(),ct=gCT(i),mg=parseFloat(document.getElementById(`mg${i}`)?.value)||25;
+  const p=calcIdealMp(ct,mg,mp);
+  const el=document.getElementById(`pv${i}`);el.value=p.toFixed(2);
+  renderRes(i,p,ct);updSum();
+  el.classList.add('profit');setTimeout(()=>el.classList.remove('profit'),1200);
+}
+
+function autoAll(){prods.forEach((_,i)=>applyAuto(i));}
+
+function applyGlobal(){
+  const mg=document.getElementById('gmg').value,emb=document.getElementById('gemb').value,op=document.getElementById('gop').value;
+  prods.forEach((_,i)=>{
+    if(mg)document.getElementById(`mg${i}`).value=mg;
+    if(emb)document.getElementById(`emb${i}`).value=emb;
+    if(op)document.getElementById(`op${i}`).value=op;
+    rc(i);
+  });
+}
+
+function renderRes(i,pv,ct){
+  const mp=getMP();
+  const fees=calcFeesMp(pv,mp);
+  const {comm,tar,tot,label,color}=fees;
+  const lucro=pv-tot-ct,mg=(lucro/pv)*100;
+  // Badge
+  const fb=document.getElementById(`fb${i}`);
+  fb.textContent=`${mp.icon} ${label}`;fb.style.background=color+'22';fb.style.color=mp.textColor||color;fb.style.border='1px solid '+color+'40';
+  // Input
+  const pEl=document.getElementById(`pv${i}`);pEl.classList.toggle('profit',lucro>0);pEl.classList.toggle('loss',lucro<=0);
+  // Frontier (Shopee only)
+  let front=false;
+  if(mp.model==='faixas'){const fx=gF(pv);front=pv>=fx.min&&(pv-fx.min)<6&&fx.min>0;}
+  const clamp=Math.max(0,Math.min(100,mg));
+  const bc=mg>=20?'#1ed760,#17a84b':mg>=10?'#f5a623,#e67e22':'#ff4444,#c0392b';
+  let al='';
+  if(lucro<0)al=`<div class="pr-al danger">⚠️ Prejuízo de ${R(Math.abs(lucro))}/un.</div>`;
+  else if(front){const fx=gF(pv),pf=gF(fx.min-.01)?.f||0;al=`<div class="pr-al warn">⚠️ Próximo à fronteira — use R$ ${(fx.min-.01).toFixed(2).replace('.',',')} e economize R$ ${(fx.f-pf).toFixed(2)}</div>`;}
+  else if(mg>=20)al=`<div class="pr-al ok">✓ Margem saudável</div>`;
+  document.getElementById(`pr${i}`).innerHTML=`
+  <div class="pc-res-full">
+    <div class="pr-fees">
+      <span class="fbadge" style="background:${color}22;color:${mp.textColor||color};border:1px solid ${color}40">${mp.icon} ${label}</span>
+      <div class="pr-chip fee"><span class="l">Comissão ${fees.pct.toFixed(1)}%</span><span class="v">${R(comm)}</span></div>
+      ${fees.txn>0?`<div class="pr-chip fee"><span class="l">Txn ${fees.txnPct.toFixed(1)}%</span><span class="v">${R(fees.txn)}</span></div>`:''}
+      ${tar>0?`<div class="pr-chip fee"><span class="l">Taxa fixa</span><span class="v">${R(tar)}</span></div>`:''}
+      <div class="pr-chip total"><span class="l">Total ${mp.short}</span><span class="v">${R(tot)}</span></div>
+    </div>
+    <div class="pr-mg">
+      <div class="pr-mr">
+        <span class="pr-lucro" style="color:${lucro>=0?'var(--green)':'var(--danger)'}">Lucro: ${lucro>=0?'':'-'}${R(Math.abs(lucro))}<span style="font-size:9.5px;color:var(--text3)"> /un</span></span>
+        <span class="pr-pct" style="color:${mg>=20?'var(--green)':mg>=10?'var(--accent)':'var(--danger)'}">${P(mg)}</span>
+      </div>
+      <div class="mtrack"><div class="mfill" style="width:${clamp}%;background:linear-gradient(90deg,${bc})"></div></div>
+      ${al}
+    </div>
+  </div>`;
+}
+
+function updSum(){
+  const mp=getMP();
+  let tc=0,tr=0,tl=0,ts=0,cnt=0;const mgs=[];
+  prods.forEach((p,i)=>{
+    const pv=parseFloat(document.getElementById(`pv${i}`)?.value);
+    if(isNaN(pv)||pv<=0)return;cnt++;
+    const ct=gCT(i),fees=calcFeesMp(pv,mp),l=pv-fees.tot-ct,m=(l/pv)*100,q=p.qCom;
+    tc+=ct*q;tr+=pv*q;ts+=fees.tot*q;tl+=l*q;mgs.push(m);
+  });
+  const am=mgs.length?mgs.reduce((a,b)=>a+b,0)/mgs.length:0;
+  document.getElementById('bsp').textContent=`${cnt} / ${prods.length}`;
+  document.getElementById('bsc').textContent=cnt?R(tc):'—';
+  document.getElementById('bsr').textContent=cnt?R(tr):'—';
+  document.getElementById('bsl').textContent=cnt?R(tl):'—';
+  document.getElementById('bsm').textContent=cnt?P(am):'—';
+  document.getElementById('bss').textContent=cnt?R(ts):'—';
+}
+
+// ══ COMPARE ALL MARKETPLACES ══
+function renderCompare(){
+  const sec=document.getElementById('compare-section');
+  const cards=document.getElementById('compare-cards');
+  if(!prods.length){sec.style.display='none';return;}
+
+  const mg=parseFloat(document.getElementById('gmg').value)||25;
+  cards.innerHTML=prods.map((p,i)=>{
+    const ct=gCT(i);
+    const rows=Object.values(MP).map(m=>{
+      const pv=calcIdealMp(ct,mg,m);
+      const fees=calcFeesMp(pv,m);
+      const lucro=pv-fees.tot-ct,mgPct=(lucro/pv)*100;
+      const clr=mgPct>=20?'var(--green)':mgPct>=10?'var(--accent)':'var(--danger)';
+      return `<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 10px;font-size:12px;white-space:nowrap">
+          <span style="font-size:13px;margin-right:5px">${m.icon}</span>
+          <strong style="color:${m.color}">${m.short}</strong>
+        </td>
+        <td style="padding:8px 10px;font-family:var(--mono);font-size:12.5px;font-weight:700">${R(pv)}</td>
+        <td style="padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--shopee2)">${R(fees.tot)}</td>
+        <td style="padding:8px 10px;font-family:var(--mono);font-size:12px;font-weight:700;color:${clr}">${P(mgPct)}</td>
+        <td style="padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:${clr}">${R(lucro)}</td>
+      </tr>`;
+    }).join('');
+
+    return `<div class="card" style="margin-bottom:14px;padding:18px 20px">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;
+                  white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+        ${p.xProd.length>70?p.xProd.substring(0,68)+'…':p.xProd}
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-left:8px">custo ${R(ct)} · margem alvo ${mg}%</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-family:var(--body)">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:6px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Canal</th>
+            <th style="text-align:left;padding:6px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Preço sugerido</th>
+            <th style="text-align:left;padding:6px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Total taxas</th>
+            <th style="text-align:left;padding:6px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Margem</th>
+            <th style="text-align:left;padding:6px 10px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)">Lucro/un</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+  sec.style.display='block';
+}
+
+// ══ PASTE ══
+function setMode(m){
+  const isFile=m==='file';
+  document.getElementById('mode-file').style.display=isFile?'block':'none';
+  document.getElementById('mode-paste').style.display=isFile?'none':'block';
+  document.getElementById('mtab-file').className='mtab-btn'+(isFile?' on':'');
+  document.getElementById('mtab-paste').className='mtab-btn'+(isFile?'':' on');
+  if(!isFile)setTimeout(()=>document.getElementById('xmlpaste').focus(),50);
+}
+function onPasteInput(){
+  const v=document.getElementById('xmlpaste').value.trim();
+  const btn=document.getElementById('btnpp');
+  btn.style.opacity=v.length>40?'1':'0.4';btn.style.pointerEvents=v.length>40?'auto':'none';
+}
+function parsePaste(){
+  const v=document.getElementById('xmlpaste').value.trim();if(!v)return;
+  const prevCount=notas.length;
+  pNFe(v,'(colado)');
+  setTimeout(()=>{if(notas.length>prevCount){document.getElementById('xmlpaste').value='';onPasteInput();}},300);
+}
+
+function clearXml(){
+  notas=[];prods=[];
+  document.getElementById('xfile').value='';
+  const z=document.getElementById('xzone');z.classList.remove('ok','drag');
+  document.getElementById('xzico').textContent='📄';
+  document.getElementById('xztit').textContent='Arraste os XMLs das NF-e aqui';
+  document.getElementById('xzsub').textContent='ou clique para selecionar · múltiplos arquivos permitidos';
+  document.getElementById('nf-list').style.display='none';
+  document.getElementById('nf-list-inner').innerHTML='';
+  document.getElementById('gbar').classList.remove('show');
+  document.getElementById('xmlpaste').value='';onPasteInput();
+  document.getElementById('product-board').classList.remove('show');
+  document.getElementById('pcards').innerHTML='';
+  document.getElementById('bsum').classList.remove('show');
+  document.getElementById('kits-section').style.display='none';
+  document.getElementById('compare-section').style.display='none';
+  document.getElementById('mp-selector').style.display='none';
+}
+
+function xerr(msg){
+  const z=document.getElementById('xzone');z.classList.remove('ok');
+  const t=document.getElementById('xztit');
+  document.getElementById('xzico').textContent='❌';t.textContent=msg;t.style.color='var(--red)';
+  document.getElementById('xzsub').textContent='Tente outro arquivo';
+  setTimeout(()=>{document.getElementById('xzico').textContent='📄';
+    t.textContent=notas.length?`${notas.length} nota${notas.length>1?'s':''} carregada${notas.length>1?'s':''}`:' Arraste os XMLs das NF-e aqui';
+    t.style.color='';
+    document.getElementById('xzsub').textContent='ou clique para selecionar · múltiplos arquivos permitidos';
+  },3500);
+}
+
+// ══ KIT SUGGESTIONS ══
+function gerarKits(){
+  const sec=document.getElementById('kits-section');
+  if(prods.length<2){sec.style.display='none';return;}
+
+  const mp=getMP();
+  const mg=parseFloat(document.getElementById('kit-mg')?.value)||30;
+  const kits=[];
+  function kitPreco(itens){
+    const ct=itens.reduce((s,{p,qty})=>s+gCT(prods.indexOf(p))*qty,0);
+    return calcIdealMp(ct,mg,mp);
+  }
+  function kitFees(pv){return calcFeesMp(pv,mp);}
+  function kitInfo(itens){
+    const ct=itens.reduce((s,{p,qty})=>s+gCT(prods.indexOf(p))*qty,0);
+    const pv=kitPreco(itens);
+    const fees=kitFees(pv);
+    const lucro=pv-fees.tot-ct;
+    const margem=(lucro/pv)*100;
+    return{ct,pv,tot:fees.tot,lucro,margem,fees};
+  }
+
+  // ── Estratégia 1: todos os produtos uma vez (se ≤ 5 itens)
+  if(prods.length>=2&&prods.length<=5){
+    const itens=prods.map(p=>({p,qty:1,label:p.xProd}));
+    const {pv,tot,lucro,margem,fees}=kitInfo(itens);
+    if(lucro>0) kits.push({
+      tag:'Kit Completo',tagColor:'var(--blue)',
+      nome:`Kit com ${prods.length} produtos`,
+      itens,pv,tot,lucro,margem,fees,
+      motivo:'Todos os produtos da nota em um único kit'
+    });
+  }
+
+  // ── Estratégia 2: pares de produtos (diferentes entre si)
+  for(let a=0;a<prods.length&&kits.length<8;a++){
+    for(let b=a+1;b<prods.length&&kits.length<8;b++){
+      const pa=prods[a],pb=prods[b];
+      const itens=[{p:pa,qty:1,label:pa.xProd},{p:pb,qty:1,label:pb.xProd}];
+      const {pv,tot,lucro,margem,fees}=kitInfo(itens);
+      if(lucro>0) kits.push({
+        tag:'Kit Duplo',tagColor:'var(--shopee2)',
+        nome:`${nomeKurto(pa.xProd)} + ${nomeKurto(pb.xProd)}`,
+        itens,pv,tot,lucro,margem,fees,
+        motivo:'Combinação de dois produtos'
+      });
+    }
+  }
+
+  // ── Estratégia 3: leva 2 do mesmo produto (se qCom >= 2)
+  prods.forEach(p=>{
+    if(p.qCom>=2&&kits.length<12){
+      const itens=[{p,qty:2,label:p.xProd+' × 2'}];
+      const {pv,tot,lucro,margem,fees}=kitInfo(itens);
+      if(lucro>0) kits.push({
+        tag:'Leve 2',tagColor:'var(--green)',
+        nome:`Duo ${nomeKurto(p.xProd)}`,
+        itens,pv,tot,lucro,margem,fees,
+        motivo:'2 unidades do mesmo produto com preço de kit'
+      });
+    }
+  });
+
+  // ── Estratégia 4: tripla (3 produtos distintos)
+  if(prods.length>=3){
+    for(let a=0;a<prods.length&&kits.length<14;a++){
+      for(let b=a+1;b<prods.length&&kits.length<14;b++){
+        for(let c=b+1;c<prods.length&&kits.length<14;c++){
+          const pa=prods[a],pb=prods[b],pc=prods[c];
+          const itens=[{p:pa,qty:1,label:pa.xProd},{p:pb,qty:1,label:pb.xProd},{p:pc,qty:1,label:pc.xProd}];
+          const {pv,tot,lucro,margem,fees}=kitInfo(itens);
+          if(lucro>0) kits.push({
+            tag:'Kit Trio',tagColor:'var(--accent)',
+            nome:`${nomeKurto(pa.xProd)} + ${nomeKurto(pb.xProd)} + ${nomeKurto(pc.xProd)}`,
+            itens,pv,tot,lucro,margem,fees,
+            motivo:'Combo de três produtos'
+          });
+        }
+      }
+    }
+  }
+
+  // Dedup & sort by margin desc, limit 12
+  const uniq=kits.filter((k,i)=>kits.findIndex(k2=>k2.nome===k.nome)===i)
+               .sort((a,b)=>b.margem-a.margem).slice(0,12);
+
+  if(!uniq.length){sec.style.display='none';return;}
+
+  document.getElementById('kits-count').textContent=`${uniq.length} sugestão${uniq.length>1?'ões':''}`;
+  document.getElementById('kits-cards').innerHTML=uniq.map(k=>`
+    <div class="kit-card">
+      <span class="kit-tag" style="background:${k.tagColor}18;border:1px solid ${k.tagColor}33;color:${k.tagColor}">
+        🎁 ${k.tag}
+      </span>
+      <div class="kit-name">${k.nome}</div>
+      <div class="kit-items">
+        ${k.itens.map(it=>`
+          <div class="kit-item">
+            <span class="ki-n">${it.label.length>42?it.label.substring(0,40)+'…':it.label}</span>
+            <span class="ki-v">${R(it.p.vUnCom)}${it.qty>1?` ×${it.qty}`:''}</span>
+          </div>`).join('')}
+      </div>
+      <div class="kit-bottom">
+        <div>
+          <div style="font-size:9.5px;color:var(--text3);font-family:var(--mono);margin-bottom:2px">${mp.icon} Preço sugerido · ${mp.short}</div>
+          <div class="kit-price">${R(k.pv)}<small>(${k.fees.label})</small></div>
+        </div>
+        <div class="kit-stats">
+          <span class="kit-stat lucro">Lucro ${R(k.lucro)}</span>
+          <span class="kit-stat mg">${k.margem.toFixed(1).replace('.',',')}% margem</span>
+          <span class="kit-stat shopee">Taxas ${R(k.tot)}</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-top:8px">
+        ${k.motivo} · custo total ${R(k.itens.reduce((s,it)=>s+it.p.vUnCom*it.qty,0))}
+      </div>
+    </div>`).join('');
+
+  sec.style.display='block';
+}
+
+function nomeKurto(n){
+  // Pega até 2 palavras significativas
+  const words=n.replace(/\s+/g,' ').trim().split(' ').filter(w=>w.length>2);
+  return words.slice(0,3).join(' ');
+}
+
+// ══ MANUAL CALCULATOR ══
+function autoCalc(){const c=parseFloat(document.getElementById('cc').value)||0;if(c>0)calcManual();}
+function calcManual(){
+  const cu=parseFloat(document.getElementById('cc').value)||0;
+  if(!cu){alert('Preencha o custo de compra.');return;}
+  const ce=parseFloat(document.getElementById('ce').value)||0;
+  const co=parseFloat(document.getElementById('co').value)||0;
+  const cx=parseFloat(document.getElementById('cx').value)||0;
+  const mg=parseFloat(document.getElementById('cm').value)||25;
+  const cd=parseFloat(document.getElementById('cd').value)||0;
+  const camp=document.getElementById('ccamp').checked;
+  const ct=cu+ce+co+cx;
+  let pv,man=false;
+  const pm=parseFloat(document.getElementById('cp').value);
+  if(!isNaN(pm)&&pm>0){pv=pm;man=true;}else{pv=calcIdeal(ct+cd,mg,camp);}
+  const fx=gF(pv),ex=camp?.025:0,comm=(fx.c+ex)*pv,tar=fx.f,tot=comm+tar,lucro=pv-tot-cd-ct,mg2=(lucro/pv)*100;
+  const front=pv>=fx.min&&(pv-fx.min)<5&&fx.min>0;
+  document.getElementById('cph').style.display='none';
+  const cc=document.getElementById('cco');cc.style.display='block';
+  document.getElementById('cpv').innerHTML=`<span>R$</span> ${pv.toFixed(2).replace('.',',')}`;
+  document.getElementById('cps').textContent=man?'preço manual':`calculado para ${mg}% de margem`;
+  const fb=document.getElementById('cfb');fb.textContent=fx.lb;fb.style.background=fx.co+'22';fb.style.color=fx.co;fb.style.border='1px solid '+fx.co+'44';
+  const cl=Math.max(0,Math.min(100,mg2));
+  const mf=document.getElementById('cmf');mf.style.width=cl+'%';mf.style.background=mg2>=20?'linear-gradient(90deg,#2ecc71,#27ae60)':mg2>=10?'linear-gradient(90deg,#f1c40f,#e67e22)':'linear-gradient(90deg,#e74c3c,#c0392b)';
+  const mp=document.getElementById('cmp');mp.textContent=P(mg2);mp.style.color=mg2>=20?'var(--green)':mg2>=10?'#f1c40f':'var(--red)';
+  ['aw','ad','ao'].forEach(k=>document.getElementById('c'+k).classList.remove('show'));
+  if(lucro<0){document.getElementById('cad').textContent=`⚠️ Prejuízo de ${R(Math.abs(lucro))}/un.`;document.getElementById('cad').classList.add('show');}
+  else if(front){document.getElementById('caw').textContent=`⚠️ Preço próximo à fronteira da ${fx.lb}.`;document.getElementById('caw').classList.add('show');}
+  else if(mg2>=20){document.getElementById('cao').textContent=`✓ Margem saudável de ${P(mg2)}`;document.getElementById('cao').classList.add('show');}
+  const rows=[{l:'Preço de venda',s:null,v:R(pv),c:'vw'},{l:'Custo do produto',s:null,v:'− '+R(cu),c:'vr'}];
+  if(ce>0)rows.push({l:'Embalagem',s:null,v:'− '+R(ce),c:'vr'});
+  if(co>0)rows.push({l:'Op. fixo',s:null,v:'− '+R(co),c:'vr'});
+  if(cx>0)rows.push({l:'Outros',s:null,v:'− '+R(cx),c:'vr'});
+  if(cd>0)rows.push({l:'Desconto/cupom',s:null,v:'− '+R(cd),c:'vr'});
+  rows.push({l:'Comissão Shopee',s:(fx.c*100).toFixed(0)+'%'+(camp?' + 2,5% camp':''),v:'− '+R(comm),c:'vo'},{l:'Tarifa fixa',s:fx.lb,v:'− '+R(tar),c:'vo'},{l:'Total Shopee',s:P(tot/pv*100)+' do preço',v:'− '+R(tot),c:'vo'},{l:'Lucro líquido',s:P(mg2)+' de margem',v:(lucro>=0?'':'-')+R(Math.abs(lucro)),c:lucro>=0?'vg':'vr'});
+  document.getElementById('cbkd').innerHTML=rows.map(r=>`<div class="brow"><div class="bl">${r.l}${r.s?`<div class="bs">${r.s}</div>`:''}</div><div class="bv ${r.c}">${r.v}</div></div>`).join('');
+}
+</script>
+</body>
+</html>
