@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Widicare · Precificador de Marketplaces</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <style>
 /* ─── DESIGN SYSTEM — pocketchange-inspired ─────────────────────────── */
 :root {
@@ -360,20 +361,174 @@ table.ft tr:hover td{background:rgba(255,255,255,.02);}
 footer{margin-top:60px;padding:22px 0;border-top:1px solid var(--border);text-align:center;
   font-size:10px;color:var(--text3);font-family:var(--mono);letter-spacing:.5px;}
 footer a{color:var(--shopee2);text-decoration:none;}
+
+/* ─── VIEWS ─── */
+.view{display:block;}
+
+/* ─── LOGIN ─── */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.login-box{width:100%;max-width:380px;}
+.login-logo{text-align:center;margin-bottom:36px;}
+.login-icon{width:56px;height:56px;background:var(--shopee);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--disp);font-weight:900;font-size:22px;color:#fff;
+  letter-spacing:-1px;margin:0 auto 16px;}
+.login-title{font-family:var(--disp);font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;}
+.login-sub{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:1px;text-transform:uppercase;}
+.login-field{margin-bottom:14px;}
+.login-lbl{display:block;font-size:11px;color:var(--text3);font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.login-input{width:100%;background:var(--bg3);border:1.5px solid var(--border2);border-radius:4px;
+  padding:10px 13px;color:var(--text);font-family:var(--mono);font-size:14px;outline:none;
+  transition:border-color .15s;}
+.login-input:focus{border-color:var(--shopee);}
+.login-btn{width:100%;padding:13px;background:var(--shopee);border:none;border-radius:4px;
+  color:#fff;font-family:var(--body);font-size:14px;font-weight:800;cursor:pointer;
+  transition:opacity .15s;letter-spacing:.3px;margin-top:6px;}
+.login-btn:hover{opacity:.88;}
+.login-err{display:none;padding:10px 12px;background:rgba(255,68,68,.07);
+  border:1px solid rgba(255,68,68,.2);border-radius:4px;margin-bottom:14px;
+  font-size:12px;color:var(--danger);font-family:var(--mono);}
+.login-demo{margin-top:14px;text-align:center;font-size:10.5px;color:var(--text3);
+  font-family:var(--mono);line-height:1.6;}
+
+/* ─── HOME ─── */
+.home-mp-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;padding:20px 14px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);cursor:pointer;transition:all .2s;text-align:center;
+  font-family:var(--body);width:100%;}
+.home-mp-icon{font-size:28px;}
+.home-mp-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.home-mp-note{font-size:10px;color:var(--text3);font-family:var(--mono);line-height:1.4;}
+
+/* ─── PRICE DELTA ─── */
+.price-delta{font-size:10.5px;font-family:var(--mono);font-weight:600;padding:3px 9px;
+  border-radius:3px;display:inline-flex;align-items:center;gap:4px;
+  margin-top:5px;letter-spacing:.2px;}
+.price-delta.up{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);color:var(--accent);}
+.price-delta.down{background:rgba(30,215,96,.06);border:1px solid rgba(30,215,96,.18);color:var(--green);}
 </style>
 </head>
 <body>
+
+<!-- ═══ VIEW: LOGIN ═══ -->
+<div id="v-login" class="view">
+<div class="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-icon">W</div>
+      <div class="login-title">Widicare</div>
+      <div class="login-sub">Precificador de Marketplaces</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Entrar na sua conta</div>
+      <div id="login-err" class="login-err"></div>
+      <div class="login-field">
+        <label class="login-lbl" for="login-email">E-mail</label>
+        <input type="email" id="login-email" class="login-input" placeholder="seu@email.com"
+          onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+      </div>
+      <div class="login-field">
+        <label class="login-lbl" for="login-pass">Senha</label>
+        <input type="password" id="login-pass" class="login-input" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button id="btn-login" class="login-btn" onclick="doLogin()">Entrar</button>
+      <div id="demo-notice" class="login-demo"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ VIEW: HOME ═══ -->
+<div id="v-home" class="view" style="display:none">
+<header>
+  <div class="wrap">
+    <div class="hdr">
+      <div class="logo">
+        <div class="logo-icon">W</div>
+        <div class="logo-text"><strong>Widicare</strong><span>Precificador de Marketplaces 2026</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="user-name-home" style="font-size:12px;color:var(--text2);font-family:var(--mono)"></span>
+        <button onclick="doLogout()"
+          style="padding:5px 10px;background:none;border:1px solid var(--border2);border-radius:4px;
+                 color:var(--text3);font-size:11px;cursor:pointer;font-family:var(--mono);transition:all .15s"
+          onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'"
+          onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'">Sair</button>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="wrap" style="padding-top:28px">
+  <div class="card" style="margin-bottom:22px">
+    <div class="card-title">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Importar XML da Nota Fiscal
+    </div>
+    <div class="xml-zone" id="home-xzone" style="cursor:pointer"
+         ondragover="dov(event)" ondragleave="dlv2(event)" ondrop="ddrop2(event)"
+         onclick="document.getElementById('home-xfile').click()">
+      <input type="file" id="home-xfile" accept=".xml,text/xml,application/xml" multiple
+             style="display:none" onchange="fsel2(event)">
+      <div class="xz-icon">📄</div>
+      <div class="xz-title">Arraste os XMLs das NF-e aqui</div>
+      <div class="xz-sub">ou clique para selecionar · navega para precificação automaticamente</div>
+    </div>
+  </div>
+  <div style="margin-bottom:28px">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                color:var(--text3);font-family:var(--mono);margin-bottom:12px">
+      Ou escolha um canal para precificar
+    </div>
+    <div id="home-mp-grid"
+         style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px"></div>
+  </div>
+  <div id="home-recent" style="display:none">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+                color:var(--text3);font-family:var(--mono);margin-bottom:12px">
+      Últimas notas carregadas
+    </div>
+    <div id="home-recent-list" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+  <div style="margin-top:50px"></div>
+</div>
+</div>
+
+<!-- ═══ VIEW: APP ═══ -->
+<div id="v-app" class="view" style="display:none">
 <div class="wrap">
 
 <header>
   <div class="hdr">
-    <div class="logo">
-      <div class="logo-icon">W</div>
-      <div class="logo-text"><strong>Widicare</strong><span>Precificador de Marketplaces 2026</span></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="goHome()"
+        style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--bg3);
+               border:1px solid var(--border2);border-radius:4px;color:var(--text2);
+               font-size:12px;font-weight:600;cursor:pointer;font-family:var(--body);
+               white-space:nowrap;transition:all .15s"
+        onmouseover="this.style.borderColor='var(--shopee)';this.style.color='var(--shopee2)'"
+        onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)'">
+        ← Início
+      </button>
+      <div class="logo">
+        <div class="logo-icon">W</div>
+        <div class="logo-text"><strong>Widicare</strong><span>Precificador de Marketplaces 2026</span></div>
+      </div>
     </div>
-    <div class="badges">
-      <div class="badge bo"><span class="bdot"></span>Vendedor Indicado · CNPJ</div>
-      <div class="badge bg">🚚 Shopee Xpress</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="badges">
+        <div class="badge bo"><span class="bdot"></span>Vendedor Indicado · CNPJ</div>
+        <div class="badge bg">🚚 Shopee Xpress</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="user-name-app" style="font-size:12px;color:var(--text2);font-family:var(--mono)"></span>
+        <button onclick="doLogout()"
+          style="padding:5px 10px;background:none;border:1px solid var(--border2);border-radius:4px;
+                 color:var(--text3);font-size:11px;cursor:pointer;font-family:var(--mono);transition:all .15s"
+          onmouseover="this.style.borderColor='var(--danger)';this.style.color='var(--danger)'"
+          onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'">Sair</button>
+      </div>
     </div>
   </div>
 </header>
@@ -649,8 +804,202 @@ footer a{color:var(--shopee2);text-decoration:none;}
 
 </div><!-- /wrap -->
 <footer><div class="wrap">Widicare · Precificador de Marketplaces 2026 · Taxas vigentes desde março/2026</div></footer>
+</div><!-- /v-app -->
 
 <script>
+// ══ SUPABASE CONFIG ══
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+let _sb = null;
+let currentUser = null;
+let currentCompanyId = null;
+const DEMO_MODE = !(SUPABASE_URL && SUPABASE_URL.startsWith('https'));
+if (!DEMO_MODE && window.supabase) {
+  _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+// ══ VIEW NAVIGATION ══
+function showView(id){
+  ['v-login','v-home','v-app'].forEach(v=>{
+    const el=document.getElementById(v);if(el) el.style.display='none';
+  });
+  const el=document.getElementById(id);if(el) el.style.display='block';
+}
+
+function goHome(){
+  renderHomeCards();
+  if(_sb&&currentCompanyId) loadRecentNFs();
+  showView('v-home');
+}
+
+// ══ AUTH ══
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim();
+  const pass=document.getElementById('login-pass').value;
+  const errEl=document.getElementById('login-err');
+  errEl.style.display='none';
+  const btn=document.getElementById('btn-login');
+  btn.textContent='Entrando…';btn.style.opacity='.6';btn.style.pointerEvents='none';
+
+  if(DEMO_MODE){
+    currentUser={email:email||'demo@demo.com',id:'demo',
+      user_metadata:{full_name:email?email.split('@')[0]:'Demo'}};
+    setUserUI(currentUser);renderHomeCards();showView('v-home');
+    btn.textContent='Entrar';btn.style.opacity='1';btn.style.pointerEvents='auto';
+    return;
+  }
+
+  const{data,error}=await _sb.auth.signInWithPassword({email,password:pass});
+  btn.textContent='Entrar';btn.style.opacity='1';btn.style.pointerEvents='auto';
+  if(error){
+    errEl.textContent=error.message==='Invalid login credentials'?'E-mail ou senha incorretos.':error.message;
+    errEl.style.display='block';return;
+  }
+  currentUser=data.user;
+  await loadProfile();setUserUI(currentUser);renderHomeCards();
+  await loadRecentNFs();showView('v-home');
+}
+
+async function doLogout(){
+  if(_sb) await _sb.auth.signOut();
+  currentUser=null;currentCompanyId=null;
+  notas=[];prods=[];
+  showView('v-login');
+}
+
+async function loadProfile(){
+  if(!_sb||!currentUser) return;
+  const{data}=await _sb.from('profiles')
+    .select('company_id,full_name').eq('id',currentUser.id).single();
+  if(data) currentCompanyId=data.company_id;
+}
+
+function setUserUI(user){
+  const name=user?.user_metadata?.full_name||user?.email||'Usuário';
+  const short=name.split(' ')[0];
+  const appEl=document.getElementById('user-name-app');
+  const homeEl=document.getElementById('user-name-home');
+  if(appEl) appEl.textContent=short;
+  if(homeEl) homeEl.textContent=short;
+}
+
+async function initApp(){
+  if(DEMO_MODE){
+    const n=document.getElementById('demo-notice');
+    if(n){
+      n.textContent='Modo demo ativo — sem persistência. Configure SUPABASE_URL e SUPABASE_ANON_KEY.';
+      n.style.display='block';
+    }
+    showView('v-login');renderHomeCards();return;
+  }
+  const{data:{session}}=await _sb.auth.getSession();
+  if(session){
+    currentUser=session.user;
+    await loadProfile();setUserUI(currentUser);renderHomeCards();
+    await loadRecentNFs();showView('v-home');
+  } else {
+    showView('v-login');
+  }
+}
+
+// ══ HOME ══
+function renderHomeCards(){
+  const grid=document.getElementById('home-mp-grid');
+  if(!grid) return;
+  grid.innerHTML=Object.values(MP).map(m=>`
+    <button class="home-mp-btn" onclick="selectMpAndGo('${m.id}')"
+      onmouseover="this.style.borderColor='${m.color}';this.style.background='${m.color}11'"
+      onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg2)'">
+      <span class="home-mp-icon">${m.icon}</span>
+      <div>
+        <div class="home-mp-name">${m.name}</div>
+        <div class="home-mp-note">${m.note}</div>
+      </div>
+    </button>`).join('');
+}
+
+async function loadRecentNFs(){
+  const container=document.getElementById('home-recent');
+  const list=document.getElementById('home-recent-list');
+  if(!_sb||!currentCompanyId||!container||!list) return;
+  const{data,error}=await _sb.from('xml_uploads')
+    .select('id,filename,nf_number,supplier_name,emission_date,total_value')
+    .eq('company_id',currentCompanyId)
+    .order('created_at',{ascending:false})
+    .limit(5);
+  if(error||!data?.length) return;
+  container.style.display='block';
+  list.innerHTML=data.map(nf=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 13px;
+                background:var(--bg3);border:1px solid var(--border);border-radius:4px">
+      <div style="font-size:18px;flex-shrink:0">🧾</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:var(--text)">
+          NF ${nf.nf_number||'—'} · ${nf.supplier_name||'—'}
+        </div>
+        <div style="font-size:10.5px;color:var(--text3);font-family:var(--mono);margin-top:2px">
+          ${nf.emission_date||''} · R$ ${parseFloat(nf.total_value||0).toFixed(2).replace('.',',')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function selectMpAndGo(id){
+  activeMpId=id;
+  showView('v-app');
+  if(prods.length) selectMp(id);
+}
+
+// ══ HOME DROP ZONE ══
+function dlv2(e){e.currentTarget.classList.remove('drag');}
+function ddrop2(e){
+  e.preventDefault();e.currentTarget.classList.remove('drag');
+  [...e.dataTransfer.files].forEach(f=>proc(f));
+}
+function fsel2(e){[...e.target.files].forEach(f=>proc(f));}
+
+// ══ SUPABASE PERSISTENCE ══
+async function checkPriceHistory(nfObj){
+  if(!_sb||!currentCompanyId) return;
+  for(const p of nfObj.prods){
+    if(!p.cProd) continue;
+    const{data}=await _sb.from('products')
+      .select('unit_price')
+      .eq('product_code',p.cProd)
+      .eq('company_id',currentCompanyId)
+      .order('created_at',{ascending:false})
+      .limit(1)
+      .maybeSingle();
+    if(data){
+      const old=parseFloat(data.unit_price);
+      if(old>0){
+        const pct=((p.vUnCom-old)/old)*100;
+        if(Math.abs(pct)>=1) p.priceAlert={oldPrice:old,newPrice:p.vUnCom,changePct:pct};
+      }
+    }
+  }
+}
+
+async function saveXmlToSupabase(nfObj){
+  if(!_sb||!currentCompanyId) return;
+  try{
+    const{data:up,error}=await _sb.from('xml_uploads').insert({
+      company_id:currentCompanyId,filename:nfObj.fname,nf_number:nfObj.nNF,
+      supplier_name:nfObj.emitNome,supplier_cnpj:nfObj.eCNPJ,
+      emission_date:nfObj.dhEmi?nfObj.dhEmi.substring(0,10):null,
+      total_value:nfObj.vNF
+    }).select('id').single();
+    if(error||!up) return;
+    await _sb.from('products').insert(nfObj.prods.map(p=>({
+      company_id:currentCompanyId,xml_upload_id:up.id,
+      product_code:p.cProd||'',product_name:p.xProd,
+      ean:p.ean||null,ncm:p.ncm||null,unit:p.uCom,
+      quantity:p.qCom,unit_price:p.vUnCom,total_price:p.vProd,
+      lot_number:p.nLote||null
+    })));
+  }catch(e){console.warn('Supabase save:',e);}
+}
+
 // ══ MARKETPLACE CONFIG ══
 const MP = {
   shopee: {
@@ -779,7 +1128,7 @@ function rebuildProds(){
   notas.forEach((nf,ni)=>nf.prods.forEach(p=>prods.push({...p,nfIdx:ni,nfLabel:`NF ${nf.nNF} · ${nf.emitNome}`})));
 }
 
-function dov(e){e.preventDefault();document.getElementById('xzone').classList.add('drag');}
+function dov(e){e.preventDefault();e.currentTarget.classList.add('drag');}
 function dlv(e){document.getElementById('xzone').classList.remove('drag');}
 function ddrop(e){
   e.preventDefault();document.getElementById('xzone').classList.remove('drag');
@@ -795,7 +1144,7 @@ function proc(file){
 
 function sNS(x){return x.replace(/\s+xmlns(?::\w+)?\s*=\s*"[^"]*"/g,'').replace(/<(\/?)\w+:/g,'<$1');}
 
-function pNFe(xml,fname){
+async function pNFe(xml,fname){
   try{
     const doc=new DOMParser().parseFromString(sNS(xml),'application/xml');
     if(doc.querySelector('parsererror')){xerr('XML inválido: '+fname);return;}
@@ -828,12 +1177,18 @@ function pNFe(xml,fname){
     // Dedupe by NF number — replace if already loaded
     const existIdx=notas.findIndex(n=>n.nNF===nNF&&n.emitNome===eNome);
     const nfObj={fname,nNF,dhEmi,emitNome:eNome,eCNPJ,vNF,vICMS,parc,prods:nfProds};
+    await checkPriceHistory(nfObj);
+    saveXmlToSupabase(nfObj); // fire-and-forget
     if(existIdx>=0) notas[existIdx]=nfObj;
     else notas.push(nfObj);
 
     rebuildProds();
     renderNFList();
     renderBoard();
+
+    // Navigate to app if loading from home view
+    const homeV=document.getElementById('v-home');
+    if(homeV&&homeV.style.display!=='none') showView('v-app');
 
     // Zone feedback
     document.getElementById('xzone').classList.add('ok');
@@ -938,6 +1293,10 @@ function renderBoard(){
           ${p.cfop?`<span class="chip">CFOP ${p.cfop}</span>`:''}
         </div>
         <div class="pc-name">${p.xProd}</div>
+        ${p.priceAlert?`<div class="price-delta ${p.priceAlert.changePct>0?'up':'down'}"
+          title="Anterior: R$ ${p.priceAlert.oldPrice.toFixed(2).replace('.',',')} → Atual: R$ ${p.priceAlert.newPrice.toFixed(2).replace('.',',')}">
+          ${p.priceAlert.changePct>0?'↑':'↓'} custo ${p.priceAlert.changePct>0?'+':''}${p.priceAlert.changePct.toFixed(1).replace('.',',')}% vs. nota anterior
+        </div>`:''}
         <div class="pc-meta">
           ${p.nLote?`<span class="chip lote">🔖 Lote ${p.nLote}</span>`:''}
           ${p.dFab?`<span class="chip">Fab. ${p.dFab}</span>`:''}
@@ -1334,6 +1693,7 @@ function nomeKurto(n){
 
 // ══ MANUAL CALCULATOR ══
 function autoCalc(){const c=parseFloat(document.getElementById('cc').value)||0;if(c>0)calcManual();}
+
 function calcManual(){
   const cu=parseFloat(document.getElementById('cc').value)||0;
   if(!cu){alert('Preencha o custo de compra.');return;}
@@ -1375,6 +1735,9 @@ function calcManual(){
   rows.push({l:'Tarifa fixa',s:fx.lb,v:'− '+R(tar),c:'vo'},{l:'Total Shopee',s:P(tot/pv*100)+' do preço',v:'− '+R(tot),c:'vo'},{l:'Lucro líquido',s:P(mg2)+' de margem',v:(lucro>=0?'':'-')+R(Math.abs(lucro)),c:lucro>=0?'vg':'vr'});
   document.getElementById('cbkd').innerHTML=rows.map(r=>`<div class="brow"><div class="bl">${r.l}${r.s?`<div class="bs">${r.s}</div>`:''}</div><div class="bv ${r.c}">${r.v}</div></div>`).join('');
 }
+
+// ── Bootstrap ──
+initApp();
 </script>
 </body>
 </html>
